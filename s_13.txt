@@ -1,0 +1,19 @@
+.5)*.35;
+      const px=mx+fx*t*len+(Math.random()-.5)*1.2,py=my+fy*t*len+(Math.random()-.5)*.8,pz=mz+fz*t*len+(Math.random()-.5)*1.2;
+      emit(px,py,pz,fx*12*wind+(Math.random()-.5)*3,fy*12*wind+1+(Math.random()-.5)*2,fz*12*wind+(Math.random()-.5)*3,.25+.2*D.fireI,.35+D.fireI*.4,Math.random()<.5?OR:GD,1);
+    }
+    // interaction along cone
+    for(let s=0.3;s<=1;s+=0.25)applyElement('IGNIS',mx+fx*s*len,my+fy*s*len,mz+fz*s*len,3.5+D.fireI*2,.35*D.fireI*dt*8);
+  }else{
+    D.mouth+=(0-D.mouth)*Math.min(1,dt*5);
+    D.headAim+=(0-D.headAim)*Math.min(1,dt*3);
+    D.fireH=Math.max(0,D.fireH-18*dt);
+    D.fireE=Math.min(100,D.fireE+(D.fireH>40?4:12)*dt);
+    D.fireI*=Math.exp(-4*dt);
+  }
+  D.fireCd=Math.max(0,D.fireCd-dt);
+  // burning trees emit
+  for(const o of treeIO)if(o.state===1){o.heat=(o.heat||2)+dt*.15;if(Math.random()<dt*4)emit(o.x+(Math.random()-.5)*2,o.y+o.h*.7,o.z+(Math.random()-.5)*2,(Math.random()-.5)*1,2+Math.random()*2,(Math.random()-.5)*1,1.2,.3,OR,1);
+    if(o.heat>8){o.state=2;o.hp=0}}
+  // lit braziers ambient
+  for(const o of braziers)if(o.state>=1&&Math.random()<dt*6)emit(o.x,o.y+3,o.z,(Math.random()-.5)*.8,1.5+Math.random(),(Math.random()-.5)*.8,1.5,.35,OR,1);

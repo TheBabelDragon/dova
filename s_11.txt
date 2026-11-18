@@ -1,0 +1,10 @@
+razier',(src,o,pow)=>{if(o.state>=1)return;o.heat=(o.heat||0)+pow*1.5;if(o.heat>2.5){o.state=1;G.forge[o.forgeIdx]=1;chime();toast(o.name+' LIT','ancient mechanism stirs','#ffc857');
+  // reveal nearby seal
+  for(const s of seals)if(Math.hypot(s.x-o.x,s.z-o.z)<80&&s.state===0){s.state=1;s.revealed=1;toast('Seal responds','hidden structure stirs','#5ff3e0')}
+  const lit=G.forge.reduce((a,b)=>a+b,0);if(lit>=3){toast('THE THREE FORGES','all braziers awakened','#ffc857');G.fx=1;chime()}save()}});
+onReact('IGNIS','seal',(src,o,pow)=>{if(o.state>=1)return;o.heat=(o.heat||0)+pow;if(o.heat>3){o.state=1;o.revealed=1;toast('Ancient seal','glyphs flare','#5ff3e0');save()}});
+onReact('IGNIS','barrier',(src,o,pow)=>{if(o.state>=1)return;o.hp-=pow*.8;if(o.hp<=0){o.state=1;toast('Barrier destroyed','path clears','#ff8a5c');nz(.35,150,.3);for(let k=0;k<8;k++)emit(o.x,o.y+2,o.z,(Math.random()-.5)*5,2+Math.random()*4,(Math.random()-.5)*5,1,.45,ST,2);save()}});
+function applyElement(el,x,y,z,radius,power){
+  for(const o of IO){if(o.hp<=0&&o.type!=='brazier'&&o.type!=='seal')continue;
+    const d=Math.hypot(o.x-x,o.y-y,o.z-z);if(d>radius+o.r)continue;
+    const fn=REACT[el+'|'+o.type];if(fn)fn({el,x,y
