@@ -1,0 +1,10 @@
+th.sin(a)*17;C.y=P.y+4+(st==='awaken'?aw*.9:0);C.z=P.z+Math.cos(a)*17;C.roll=0;C.fov=55;Lx=P.x;Ly=P.y+1.5;Lz=P.z}
+ else{const cp=D.pitch*.5,cc=Math.cos(cp),f=[Math.sin(D.yaw)*cc,Math.sin(cp),Math.cos(D.yaw)*cc],d=15+D.sp*.06,k=1-Math.exp(-dt*(D.mode==='GROUNDED'?6:3.2));
+  C.x+=(P.x-f[0]*d-C.x)*k;C.y+=(P.y-f[1]*d+4.5-C.y)*k;C.z+=(P.z-f[2]*d-C.z)*k;C.roll+=(D.roll*.35-C.roll)*(1-Math.exp(-3*dt));
+  C.fov+=(58+D.sp*.22+(D.boost||D.surge>0?10:0)-C.fov)*(1-Math.exp(-2*dt));Lx=P.x+f[0]*12;Ly=P.y+f[1]*12+1;Lz=P.z+f[2]*12}
+ lk=[Lx,Ly,Lz]}
+/* ---------- drawing ---------- */
+function ringD(M,Rr,n,w,col,e){for(let i=0;i<n;i++){const a=i/n*6.2832;dr(cubeM,mul(M,mul(RZ(a),mul(T(Rr,0,0),Sc(w,Rr*6.2832/n*1.15,w*.7)))),col,e,0)}}
+function island(i){const{x,y,z,r,th}=i;dr(cubeM,mul(T(x,y-3,z),Sc(2*r,6,2*r)),GR,0,1);dr(cubeM,mul(T(x,y-3.05,z),mul(RY(.785),Sc(1.8*r,6,1.8*r))),GR,0,1);
+ dr(pyrM,mul(T(x,y-6-th/2,z),Sc(1.9*r,-th,1.9*r)),RK,0,1);dr(pyrM,mul(T(x,y-6-th*.45,z),mul(RY(.785),Sc(1.5*r,-th*.9,1.5*r))),RK2,0,1)}
+function arch(x,y,z,yw){const M=mul(T(x,y,z),RY(yw));bx(M,-6,9,0,2.4,18,2.4,ST,0,1);bx(M,6,9,0,2.4,18,2.4,ST,0,1);bx(M,0,18.5,0,15,2.4,2.8,ST,0,1);bx(M,0,17,0,6,.5,1,TQ,.9);bx(M,-6,2,
