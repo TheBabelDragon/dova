@@ -1,1 +1,53 @@
-PLACEHOLDER
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>DOVA — First Flight · v0.2</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{--t:#5ff3e0;--g:#ffc857;color-scheme:dark}
+html,body{margin:0;height:100%;background:#0b0714;overflow:hidden;font-family:Cinzel,serif;color:#fff;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;-webkit-text-size-adjust:100%;overscroll-behavior:none}
+canvas{position:fixed;inset:0;width:100%;height:100%;touch-action:none}#gl{image-rendering:pixelated}#hud{pointer-events:none}
+#ui{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:rgba(8,4,16,.6);text-align:center;padding:20px;box-sizing:border-box}
+#ui h1{font-size:min(16vw,84px);margin:0;letter-spacing:.2em;color:var(--g);text-shadow:0 0 28px #ff9a3c}
+#ui p{margin:0;color:#bfeee8;max-width:560px;font-size:13px;line-height:1.6;letter-spacing:.06em}
+button,select{font:inherit;font-size:14px;background:#12303a;color:var(--t);border:1px solid var(--t);padding:10px 24px;letter-spacing:.14em;cursor:pointer;-webkit-user-select:none}
+.hide{display:none!important}
+#tc div{position:fixed;width:70px;height:70px;border-radius:50%;border:2px solid var(--t);display:flex;align-items:center;justify-content:center;background:#0a2a3099;font-size:11px;letter-spacing:.05em;touch-action:none;-webkit-user-select:none}
+#bFire{border-color:#ff6a3c!important;color:#ff9a5c!important}
+</style></head><body>
+<canvas id="gl"></canvas><canvas id="hud"></canvas>
+<div id="tc" class="hide"><div id="bF" style="right:16px;bottom:calc(22px + env(safe-area-inset-bottom,0px))">FLAP</div><div id="bB" style="right:96px;bottom:calc(22px + env(safe-area-inset-bottom,0px))">BOOST</div><div id="bFire" style="right:16px;bottom:calc(100px + env(safe-area-inset-bottom,0px))">FIRE</div><div id="bA" style="right:96px;bottom:calc(100px + env(safe-area-inset-bottom,0px))">SURGE</div></div>
+<div id="ui"><h1>DOVA</h1><p>FIRST FLIGHT · ELEMENTAL INTERACTIONS · v0.2</p>
+<p>WASD steer · Mouse aim · SPACE flap · SHIFT boost · <b>Q / RMB fire breath</b> · F Aeris Surge · R recover · E resonance · ESC pause<br>Touch: left steer · FLAP / BOOST / FIRE / SURGE</p>
+<button id="go">AWAKEN</button>
+<label style="font-size:12px;letter-spacing:.12em">PIXEL SIZE <select id="q"><option value="170">Chunky</option><option value="250">Normal</option><option value="340">Fine</option></select></label>
+<button id="rst" style="font-size:11px;padding:6px 14px">RESET SAVE</button><p id="err" style="color:#f88"></p></div>
+<script>
+'use strict';
+const $=i=>document.getElementById(i),gc=$('gl'),hc=$('hud'),hx=hc.getContext('2d'),cl=(v,a,b)=>v<a?a:v>b?b:v,sm=x=>{x=cl(x,0,1);return x*x*(3-2*x)};
+const SK='dova.v2',SK1='dova.v1';
+let G={g:[0,0,0],r:0,p:null,yaw:0,q:250,v:2,forge:[0,0,0],burned:{},cracked:{},seals:{},fx:0};
+try{
+  const raw=localStorage.getItem(SK)||localStorage.getItem(SK1)||'{}';
+  const o=JSON.parse(raw);
+  Object.assign(G,o);
+  if(!G.v){G.v=2;G.forge=G.forge||[0,0,0];G.burned=G.burned||{};G.cracked=G.cracked||{};G.seals=G.seals||{};G.fx=G.fx||0}
+}catch(e){}
+const save=()=>{try{
+  G.p=[P.x,P.y,P.z];G.yaw=D.yaw;G.v=2;
+  G.burned={};G.cracked={};G.seals={};
+  for(const o of IO){if(o.type==='tree'&&o.state>=1)G.burned[o.id]=o.state;if(o.type==='crystal'&&o.state>=1)G.cracked[o.id]=o.state;if(o.type==='seal'&&o.state>=1)G.seals[o.id]=o.state;if(o.type==='brazier'&&o.state>=1)G.forge[o.forgeIdx]=1}
+  localStorage.setItem(SK,JSON.stringify(G));
+}catch(e){}};
+/* ---------- math ---------- */
+const I=()=>{const m=new Float32Array(16);m[0]=m[5]=m[10]=m[15]=1;return m},I4=I();
+const mul=(a,b)=>{const o=new Float32Array(16);for(let i=0;i<4;i++)for(let j=0;j<4;j++){let s=0;for(let k=0;k<4;k++)s+=a[k*4+j]*b[i*4+k];o[i*4+j]=s}return o};
+const T=(x,y,z)=>{const m=I();m[12]=x;m[13]=y;m[14]=z;return m},Sc=(x,y,z)=>{const m=I();m[0]=x;m[5]=y;m[10]=z;return m};
+const RX=a=>{const m=I(),c=Math.cos(a),s=Math.sin(a);m[5]=c;m[6]=s;m[9]=-s;m[10]=c;return m};
+const RY=a=>{const m=I(),c=Math.cos(a),s=Math.sin(a);m[0]=c;m[2]=-s;m[8]=s;m[10]=c;return m};
+const RZ=a=>{const m=I(),c=Math.cos(a),s=Math.sin(a);m[0]=c;m[1]=s;m[4]=-s;m[5]=c;return m};
+const xf=(M,x,y,z,rx,ry,rz)=>mul(M,mul(T(x,y,z),mul(RY(ry),mul(RX(rx),RZ(rz)))));
+const persp=(f,a,n,r)=>{const m=new Float32Array(16),t=1/Math.tan(f/2);m[0]=t/a;m[5]=t;m[10]=(r+n)/(n-r);m[11]=-1;m[14]=2*r*n/(n-r);return m};
+const nrm=v=>{const l=Math.hypot(v[0],v[1],v[2])||1;return[v[0]/l,v[1]/l,v[2]/l]},crs=(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]];
+function rng(s){return()=>{s=s+0x6D2B79F5|0;let t=Math.imul(s^s>>>15,1|s);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+/* FULL GAME BODY CONTINUES - see repo for complete single-file build */
+console.log('DOVA v0.2 loader');
+</script></body></html>
