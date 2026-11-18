@@ -1,0 +1,9 @@
+ter(0,3,gl.FLOAT,false,0,0);return{vao,n:v.length/3}}
+function cubeV(){const v=[];for(let a=0;a<3;a++)for(const s of[-.5,.5]){const x=(a+1)%3,y=(a+2)%3;for(const[i,j]of[[-1,-1],[1,-1],[1,1],[-1,-1],[1,1],[-1,1]]){const p=[0,0,0];p[a]=s;p[x]=i*.5;p[y]=j*.5;v.push(...p)}}return v}
+function pyrV(){const v=[],c=[[-.5,-.5,-.5],[.5,-.5,-.5],[.5,-.5,.5],[-.5,-.5,.5]],t=[0,.5,0];for(let i=0;i<4;i++)v.push(...c[i],...c[(i+1)%4],...t);v.push(...c[0],...c[1],...c[2],...c[0],...c[2],...c[3]);return v}
+function initGL(){gl=gc.getContext('webgl2',{antialias:false});if(!gl)throw'WebGL2 is not available in this browser.';PG=prog(VS,FS);SG=prog(SVS,SFS);
+for(const n of['VP','M','C','cam','E','fog'])u[n]=gl.getUniformLocation(PG,n);for(const n of['F','R','U','K'])su[n]=gl.getUniformLocation(SG,n);
+cubeM=mesh(cubeV());pyrM=mesh(pyrV());skyV=gl.createVertexArray();gl.enable(gl.DEPTH_TEST)}
+const dr=(m,M,c,e=0,t=0)=>{gl.bindVertexArray(m.vao);gl.uniformMatrix4fv(u.M,false,M);gl.uniform3f(u.C,c[0],c[1],c[2]);gl.uniform2f(u.E,e,t);gl.drawArrays(gl.TRIANGLES,0,m.n)};
+const bx=(M,x,y,z,sx,sy,sz,c,e=0,t=0,m=cubeM)=>dr(m,mul(M,mul(T(x,y,z),Sc(sx,sy,sz))),c,e,t);
+/* ---------- palette & world data ---------- 

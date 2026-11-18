@@ -1,0 +1,10 @@
+*/
+const TQ=[.2,.95,.85],GD=[1,.78,.3],OR=[1,.45,.2],DK=[.12,.12,.17],DK2=[.22,.22,.3],ST=[.42,.37,.47],RK=[.3,.24,.33],RK2=[.24,.19,.3],GR=[.3,.45,.32],WB=[.45,.85,1],MB=[.08,.38,.42];
+const isl=[],trees=[],clouds=[],far=[],mts=[],R=rng(1337);
+const mk=(x,y,z,r,deco=1)=>{const i={x,y,z,r,top:y,th:r*1.1};isl.push(i);if(deco)for(let k=0;k<r/6;k++){const tx=i.x+(R()-.5)*r*1.4,tz=i.z+(R()-.5)*r*1.4;if(Math.abs(tx-i.x)+Math.abs(tz-i.z)<r*1.1&&Math.hypot(tx-x,tz-z)>16)trees.push([tx,y,tz,3+R()*4,R()])}return i};
+const ST0=mk(0,0,0,70),IA=mk(-300,60,420,75),IB=mk(380,-30,650,85),IC=mk(50,140,1050,70);
+[[-520,-60,900,55],[600,120,300,45],[-200,-140,-300,60],[300,-100,-420,50],[-650,40,-100,40],[800,60,1000,50]].forEach(a=>mk(...a));
+for(let i=0;i<18;i++){const a=R()*6.283,d=900+R()*900;far.push([Math.sin(a)*d,-250+R()*500,Math.cos(a)*d,18+R()*30])}
+for(let i=0;i<14;i++){const a=i/14*6.283+R()*.3;mts.push([Math.sin(a)*3000,-300,Math.cos(a)*3000,900+R()*500,500+R()*500])}
+for(let i=0;i<45;i++)clouds.push([(R()-.5)*4400,[-90,130,280][i%3]+R()*40,(R()-.5)*4400,10+R()*16]);
+const GP=[[IA.x,IA.top+42,IA.z],[IB.x,IB.top+58,IB.z],[IC.x,IC.top+104,IC.z]],GN=[['AERIS','wind',TQ],['LUX','light',GD],

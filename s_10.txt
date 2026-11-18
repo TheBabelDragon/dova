@@ -1,0 +1,13 @@
+);
+// Weak barriers / growths
+const barriers=[];
+[[-40,3,60],[80,4,-50],[IA.x+20,IA.top+2,IA.z+70],[IB.x-60,IB.top+2,IB.z-20]].forEach((p,i)=>{
+  barriers.push(addIO({id:'b'+i,type:'barrier',x:p[0],y:p[1],z:p[2],r:5,state:0,hp:3,sus:'IGNIS'}))});
+// Elemental reaction registry
+const REACT={};
+function onReact(a,b,fn){REACT[a+'|'+b]=fn;REACT[b+'|'+a]=fn}
+onReact('IGNIS','tree',(src,o,pow)=>{if(o.state>=2)return;o.heat=(o.heat||0)+pow*1.2;if(o.heat>1.2&&o.state===0){o.state=1;toast('Vegetation ignites','embers rise','#ff6a3c');nz(.4,200,.2);for(let k=0;k<6;k++)emit(o.x,o.y+o.h*.6,o.z,(Math.random()-.5)*4,2+Math.random()*3,(Math.random()-.5)*4,.8+Math.random(),.4,OR,1)}
+  if(o.heat>4&&o.state===1){o.state=2;o.hp=0;toast('Scorched','tree burns out','#aa5533');save()}});
+onReact('IGNIS','crystal',(src,o,pow)=>{if(o.state>=2)return;o.heat=(o.heat||0)+pow;if(o.heat>2&&o.state===0){o.state=1;toast('Crystal heats','glow intensifies','#ffc857')}
+  if(o.heat>5){o.state=2;o.hp=0;toast('Crystal shatters','fragments scatter','#ff9a5c');nz(.5,600,.25,-200);for(let k=0;k<12;k++)emit(o.x,o.y+2,o.z,(Math.random()-.5)*8,1+Math.random()*6,(Math.random()-.5)*8,1.2,.5,GD,2);save()}});
+onReact('IGNIS','b

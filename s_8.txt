@@ -1,0 +1,17 @@
+['IGNIS','fire',OR]];
+const RG=[];for(let i=0;i<6;i++){const a=.4+i*.85;RG.push({p:[Math.sin(a)*270,45+i*12,Math.cos(a)*270],yaw:Math.atan2(Math.cos(a),-Math.sin(a))})}
+
+/* ---------- elemental interaction engine v0.2 ---------- */
+const ELEMENTS={IGNIS:'fire',AERIS:'wind',LUX:'light',TERRA:'earth',PELAGIA:'water',UMBRA:'shadow'};
+const IO=[]; // interactive objects
+const PART=[]; // particle pool
+const MAX_PART=180;
+function poolPart(){for(const p of PART)if(!p.alive)return p;if(PART.length<MAX_PART){const p={alive:0};PART.push(p);return p}return null}
+function emit(x,y,z,vx,vy,vz,life,sz,col,kind){const p=poolPart();if(!p)return;p.alive=1;p.x=x;p.y=y;p.z=z;p.vx=vx;p.vy=vy;p.vz=vz;p.life=life;p.t=life;p.sz=sz;p.col=col;p.kind=kind||0}
+// Interactive object factory
+function addIO(o){o.id=o.id||(IO.length+1);o.state=o.state||0;o.hp=o.hp==null?1:o.hp;o.r=o.r||6;IO.push(o);return o}
+// Trees become interactive (burnable)
+const treeIO=[];
+for(let ti=0;ti<trees.length;ti++){const t=trees[ti];const id='t'+ti;const st=G.burned&&G.burned[id]?G.burned[id]:0;
+  const o=addIO({id,type:'tree',x:t[0],y:t[1],z:t[2],h:t[3],seed:t[4],r:t[3]*1.2,state:st,hp:st>=2?0:1,sus:'IGNIS'});
+  treeIO.push(o)
