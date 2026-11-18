@@ -1,0 +1,16 @@
+.mode==='GROUNDED'){D.pitch*=1-Math.min(1,dt*5);D.roll*=1-Math.min(1,dt*5);D.yr=-ax*.9;D.yaw+=D.yr*dt*(D.sp>1?1:.5);
+  D.sp=Math.max(0,D.sp+(D.flap?9:-5)*dt);D.vs=0;D.air=0;D.tk+=(0-D.tk)*Math.min(1,dt*4);
+  if(D.sp>16&&D.flap){D.mode='TAKEOFF';D.vs=8;D.pitch=.2;D.tkt=2.2;toast('Takeoff','climb with S, hold SPACE')}}
+ else{D.air=1;D.tk+=(1-D.tk)*Math.min(1,dt*2);
+  const stall=D.sp<13.5&&D.tkt<=0,ct=stall?.35:1;
+  D.roll+=(ax*.95*ct-D.roll)*(1-Math.exp(-2.5*dt));D.yr=-Math.sin(D.roll)*(9.8/Math.max(D.sp,14))*1.7*ct;D.yaw+=D.yr*dt;
+  D.pitch=cl(D.pitch+ay*1.1*ct*dt,-1.25,1.25);
+  if(stall)D.pitch+=(-.9-D.pitch)*Math.min(1,dt*.9);
+  const sp=Math.sin(D.pitch);acc=7*(1-D.sp/32)-9.8*sp*.95-.0035*D.sp*D.sp;
+  if(D.flap)acc+=3.5;
+  if(sh){if(D.pitch<-.2)acc+=12;else if(D.aeth>0){acc+=26;D.aeth-=24*dt;D.boost=1}}
+  if(D.surge>0){acc+=14;D.surge-=dt}
+  D.sp=cl(D.sp+acc*dt,0,75);
+  const lf=sm((D.sp-9)/11);D.vs+=(-9.8*(1-lf)+(D.flap?9:0)+(D.surge>0?7:0)-.7*D.vs)*dt;D.vs=cl(D.vs,-60,30);
+  if(D.tkt>0){D.tkt-=dt;D.vs=Math.max(D.vs,D.flap?5:0)}
+  if(Math.hypot(P.x,P.z)>2300){const a=Math.atan2(-P.x,-P.z);let d=a-D.yaw;d=Math.atan2(Math.sin(d),Math.cos(d));D.yaw+=d*dt*.8;if(Math.random()<dt)toa

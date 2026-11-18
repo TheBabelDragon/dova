@@ -1,0 +1,6 @@
+xt||window.webkitAudioContext)();mg=AC.createGain();mg.gain.value=.5;mg.connect(AC.destination);
+NB=AC.createBuffer(1,AC.sampleRate*2,AC.sampleRate);const d=NB.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;
+const ns=AC.createBufferSource();ns.buffer=NB;ns.loop=true;wf=AC.createBiquadFilter();wf.type='bandpass';wf.Q.value=.6;wg=AC.createGain();wg.gain.value=0;ns.connect(wf);wf.connect(wg);wg.connect(mg);ns.start();
+cg=AC.createGain();cg.gain.value=0;cg.connect(mg);co=AC.createOscillator();co.frequency.value=90;co.connect(cg);co.start();const c2=AC.createOscillator();c2.type='triangle';c2.frequency.value=135;c2.connect(cg);c2.start()}catch(e){AC=null}}
+function tone(f,d,ty='sine',g=.2,sl=0,at=0){if(!AC)return;const t=AC.currentTime+at,o=AC.createOscillator(),v=AC.createGain();o.type=ty;o.frequency.setValueAtTime(f,t);if(sl)o.frequency.linearRampToValueAtTime(f+sl,t+d);v.gain.setValueAtTime(g,t);v.gain.exponentialRampToValueAtTime(.001,t+d);o.connect(v);v.connect(mg);o.start(t);o.stop(t+d)}
+function nz(d,f,g,sl=0){if(!AC)return;const t=AC.currentTime,s=AC.createBufferSource(),fl=AC.createBiquadFilter(),v=AC.createGain();s.buffer=NB;fl.type='lowpass';fl.frequency.

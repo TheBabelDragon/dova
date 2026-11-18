@@ -1,0 +1,12 @@
+st('Edge of the Reach','turning back','#ffc857')}
+  D.mode=D.tkt>0?'TAKEOFF':stall?'STALL':alt<9&&D.vs+Math.sin(D.pitch)*D.sp<-3&&D.sp<30?'LANDING':D.pitch<-.3?'DIVE':D.pitch>.2?'CLIMB':'GLIDE'}
+ if(D.mode!=='GROUNDED'){const c=Math.cos(D.pitch);P.x+=Math.sin(D.yaw)*c*D.sp*dt;P.z+=Math.cos(D.yaw)*c*D.sp*dt;P.y+=(Math.sin(D.pitch)*D.sp+D.vs)*dt}
+ else{P.x+=Math.sin(D.yaw)*D.sp*dt;P.z+=Math.cos(D.yaw)*D.sp*dt}
+ const g2=gH(P.x,P.z,P.y);
+ if(g2>-1e8&&P.y<g2+GO){const vy=Math.sin(D.pitch)*D.sp+D.vs;P.y=g2+GO;
+  if(D.mode!=='GROUNDED'&&D.tkt<=0){if(vy<-26){D.sp*=.35;D.vs=6;toast('Hard landing','frame stressed','#ff8a5c')}else{D.mode='GROUNDED';D.vs=0;toast('Touchdown')}}else if(D.mode!=='GROUNDED'){D.vs=Math.max(D.vs,0)}}
+ if(P.y<-420){P.x=0;P.z=0;P.y=30;D.sp=26;D.vs=0;D.pitch=0;D.roll=0;D.yaw=0;D.mode='GLIDE';toast('Recovered','returned to the Reach','#ffc857')}
+ D.aeth=cl(D.aeth+(D.boost||D.surge>0?0:D.air?6:16)*dt,0,100);D.cd-=dt;
+ D.core+=((.45+D.boost*.4+(D.surge>0?.5:0)+(1-D.aeth/100)*.1)-D.core)*Math.min(1,dt*3);
+ // collectibles
+ for(let i=0;i<3;i++)if(!G.g[i]&&Math.hypot(P.x-GP[i][0],P.y-GP[i][1],P.z-GP[i][2])<15){G.g[i]=1;lastCol=tm;chime();toast(GN[i][0]+' GLYPH',GN[i][1]+' r
