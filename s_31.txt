@@ -1,0 +1,9 @@
+,i)=>{hx.globalAlpha=cl(o.t,0,1);hx.fillStyle=o.c;hx.font='700 20px Cinzel';hx.fillText(o.a,W/2,H*.2+i*44);hx.font='12px Cinzel';hx.fillStyle='#fff';hx.fillText(o.b,W/2,H*.2+i*44+16);hx.globalAlpha=1});
+ if(dbg){hx.textAlign='left';hx.fillStyle='#0f0';hx.font='12px monospace';[`fps ${fps|0}`,`sp ${D.sp.toFixed(1)} vs ${D.vs.toFixed(1)}`,`pitch ${D.pitch.toFixed(2)} roll ${D.roll.toFixed(2)} yr ${D.yr.toFixed(2)}`,`pos ${P.x|0},${P.y|0},${P.z|0}`,`mode ${D.mode} fold ${D.fold.toFixed(2)} amp ${D.amp.toFixed(2)}`,`aether ${D.aeth|0} surge ${D.surge.toFixed(1)}`,`fireE ${D.fireE|0} heat ${D.fireH|0} on ${D.fireOn}`,`res ${gc.width}x${gc.height}`].forEach((l,i)=>hx.fillText(l,20,110+i*15))}}
+/* ---------- input / ui ---------- */
+function rs(){const a=innerWidth/innerHeight;gc.height=G.q;gc.width=Math.round(G.q*a);const d=Math.min(devicePixelRatio||1,2);hc.width=innerWidth*d;hc.height=innerHeight*d;hx.setTransform(d,0,0,d,0,0)}
+addEventListener('resize',rs);
+document.addEventListener('gesturestart',e=>e.preventDefault());
+let lastTouchEnd=0;document.addEventListener('touchend',e=>{const n=Date.now();if(n-lastTouchEnd<=300)e.preventDefault();lastTouchEnd=n},false);
+
+addEventListener('ke

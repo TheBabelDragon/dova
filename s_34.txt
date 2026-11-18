@@ -1,0 +1,15 @@
+return}
+ st='awaken';aw=0;try{document.body.requestPointerLock()}catch(e){}tone(55,3.5,'sawtooth',.1,60);setTimeout(chime,3200)};
+function pause(){st='pause';$('go').textContent='RESUME';$('ui').classList.remove('hide');save();try{document.exitPointerLock()}catch(e){}}
+/* ---------- loop ---------- */
+let last=0;
+function frame(ms2){requestAnimationFrame(frame);const dt=Math.min((ms2-last)/1000||.016,.05);last=ms2;fps+=(1/Math.max(dt,.001)-fps)*.05;
+ if(lost)return;tm+=dt;
+ if(st==='play'){if(dt>.025){sim(dt/2);sim(dt/2)}else sim(dt);if(D.surge>0){trail.push([P.x,P.y,P.z]);if(trail.length>18)trail.shift()}else if(trail.length)trail.shift()}
+ else{if(st==='awaken'){aw+=dt;D.core=Math.min(1,aw/3.6);if(aw>4.2){st='play';toast('The frame lives','hold SPACE to run and take off')}}anim(dt)}
+ if(st==='play'&&tm%3<dt)save();
+ cam(dt);render();hud();audU()}
+try{initGL();rs();requestAnimationFrame(frame)}catch(e){$('err').textContent=String(e);$('go').classList.add('hide')}
+gc.addEventListener('webglcontextlost',e=>{e.preventDefault();lost=true});
+gc.addEventListener('webglcontextrestored',()=>{try{initGL();lost=false}catch(e){}});
+</script></body></html>

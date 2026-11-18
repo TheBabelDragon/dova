@@ -1,0 +1,9 @@
+3.6)+' km/h',20,H-58);hx.fillText('ALT '+Math.round(P.y)+' m',20,H-36);hx.fillStyle=D.mode==='STALL'?'#ff6a5c':'#ffc857';hx.fillText(D.mode,20,H-14);
+ hx.textAlign='center';hx.strokeStyle='rgba(95,243,224,.5)';hx.strokeRect(W/2-100,H-34,200,10);hx.fillStyle=D.surge>0?'#fff':'#5ff3e0';hx.fillRect(W/2-100,H-34,2*D.aeth,10);hx.fillStyle='#bfeee8';hx.font='11px Cinzel';hx.fillText('AETHER',W/2,H-42);
+ // fire energy
+ hx.strokeStyle='rgba(255,106,60,.5)';hx.strokeRect(W/2-100,H-22,200,8);hx.fillStyle=D.fireH>80?'#ff4422':'#ff6a3c';hx.fillRect(W/2-100,H-22,2*D.fireE,8);
+ hx.fillStyle='#ff9a5c';hx.font='10px Cinzel';hx.fillText(D.fireCd>0?'COOLING':'FIRE',W/2,H-12);
+ // forges
+ const fl=G.forge?G.forge.reduce((a,b)=>a+b,0):0;hx.fillStyle='#ffc857';hx.font='12px Cinzel';hx.textAlign='right';hx.fillText('FORGES '+fl+'/3',W-20,H-58);hx.textAlign='center';
+ for(let i=0;i<3;i++)glyph2(i,W/2-50+i*50,H-76,14,`rgb(${GN[i][2].map(v=>v*255|0)})`,G.g[i]);
+ hx.fillStyle='#ffc857';hx.font='13px Cinzel';const fl2=G.forge?G.forge.reduce((a,b)=>a+b,0):0;hx.fillText(!allG()?`Find the ancient glyphs ${G.g[0]+G.g[1]+G.g[2]}/3 — follow the golden marker`:G.r<6?`Trial of Rings ${G.r}/6${D.cd>0?'':' · F: Aeris

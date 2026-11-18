@@ -1,0 +1,7 @@
+ Surge'}`:fl2<3?`Ignite the Three Forges ${fl2}/3 · hold Q to breathe fire`:'The Shattered Reach is yours — explore freely',W/2,H-100);
+ hx.strokeStyle='rgba(255,200,87,.7)';hx.beginPath();hx.arc(W/2,H*.45,8,0,6.283);hx.moveTo(W/2-14,H*.45);hx.lineTo(W/2-8,H*.45);hx.moveTo(W/2+14,H*.45);hx.lineTo(W/2+8,H*.45);hx.stroke();
+ if(D.sp>38||D.surge>0){hx.strokeStyle=`rgba(255,255,255,${cl((D.sp-35)/90,.1,.4)})`;hx.beginPath();for(let i=0;i<16;i++){const a=Math.random()*6.283,r=H*(.3+Math.random()*.2);hx.moveTo(W/2+Math.cos(a)*r,H/2+Math.sin(a)*r);hx.lineTo(W/2+Math.cos(a)*(r+30+D.sp),H/2+Math.sin(a)*(r+30+D.sp))}hx.stroke()}
+ if(D.mode==='STALL'){const g=hx.createRadialGradient(W/2,H/2,H*.3,W/2,H/2,H*.8);g.addColorStop(0,'rgba(255,0,0,0)');g.addColorStop(1,`rgba(255,40,30,${.25+.2*Math.sin(tm*12)})`);hx.fillStyle=g;hx.fillRect(0,0,W,H);hx.fillStyle='#ff6a5c';hx.font='700 28px Cinzel';hx.fillText('STALL — dive (W) or press R',W/2,H*.3)}
+ if(tm-lastCol<2.5){const i=G.g.lastIndexOf(1);glyph2(i,W/2,H*.5,50+(tm-lastCol)*15,`rgb(${GN[i][2].map(v=>v*255|0)})`,1)}
+ for(let i=toasts.length-1;i>=0;i--){const o=toasts[i];o.t-=1/60;if(o.t<0){toasts.splice(i,1);continue}}
+ toasts.slice(-3).forEach((o

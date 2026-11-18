@@ -1,0 +1,11 @@
+ydown',e=>{if(e.code==='Space'||e.code.startsWith('Arrow'))e.preventDefault();if(e.repeat)return;K[e.code]=1;
+ if(e.code==='Escape')st==='play'?pause():0;if(e.code==='Backquote')dbg^=1;
+ if(st!=='play')return;if(e.code==='KeyF')ability();if(e.code==='KeyR'){D.rec=1.4;toast('Recovery','leveling the frame')}
+ if(e.code==='KeyE'){const t=tgt();nz(.5,900,.1);tone(440,1,'sine',.15,-200);toast('Resonance pulse',t?Math.round(tgtD)+' m to the signal':'the Reach is quiet')}});
+addEventListener('keyup',e=>K[e.code]=0);addEventListener('blur',()=>{for(const k in K)K[k]=0;if(st==='play')pause()});
+addEventListener('mousemove',e=>{if(st==='play'){ms.x=cl(ms.x+e.movementX*.006,-1,1);ms.y=cl(ms.y-e.movementY*.006,-1,1)}});
+document.addEventListener('pointerlockchange',()=>{if(!document.pointerLockElement&&st==='play')pause()});
+let tp=null;
+addEventListener('pointerdown',e=>{if(e.pointerType==='touch'&&st==='play'&&e.clientX<innerWidth/2&&!tp)tp={id:e.pointerId,x:e.clientX,y:e.clientY}});
+addEventListener('pointermove',e=>{if(tp&&e.pointerId===tp.id){tj.x=cl((e.clientX-tp.x)/60,-1,1);tj.y=cl((e.clientY-tp.y)/60,-1,1)}});
+const pu=e=>{if(tp&&e.pointerId===tp.id){tp=null;tj.x=tj.y=0}};addEventListe
