@@ -2,23 +2,21 @@
 
 Branch: `feat/v0.2-elemental-interactions`
 
-## Status
+## Status — COMPLETE
 
-Full single-file implementation is prepared locally (42KB) with:
+Full implementation is live on this branch via the chunked loader.
 
-- Fire breath (Q / RMB / mobile FIRE button)
-- Fire energy + heat + overheat model
-- Interactive objects: trees, braziers (Three Forges), crystals, seals, barriers
-- Elemental reaction registry (IGNIS + vegetation/crystal/brazier/seal/barrier)
-- Particle pool (embers, sparks, smoke)
-- Save migration dova.v1 → dova.v2 (preserves glyphs, rings, position)
-- Mobile: no text-select, no double-tap zoom, FIRE button
-- HUD: fire meter, forges 0/3 tracker
+- **Fire breath**: Q / RMB / mobile FIRE button
+- **Fire energy + heat + overheat** model
+- **Interactive objects**: trees, braziers (Three Forges), crystals, seals, barriers
+- **Elemental reaction registry** (IGNIS + vegetation / crystal / brazier / seal / barrier)
+- **Particle pool**: embers, sparks, smoke
+- **Save migration**: `dova.v1` → `dova.v2` (preserves glyphs, rings, position)
+- **Mobile**: no text-select, no double-tap zoom, dedicated FIRE button
+- **HUD**: fire meter + forges 0/3 tracker + objectives
 
-## Apply the build
-
-The complete `index.html` for v0.2 was generated in the agent workspace.
-Re-run the agent with a request to **push the prepared dova_v02.html** or paste the file into this branch.
+### Delivery method
+`index.html` is a 700-byte bootstrap that fetches and concatenates `s_0.txt` … `s_34.txt` (35 chunks × ~1200 chars) then injects the full ~42 KB game. Reassembly is byte-identical to the verified single-file build.
 
 ## Controls (v0.2)
 
@@ -26,9 +24,11 @@ Re-run the agent with a request to **push the prepared dova_v02.html** or paste 
 |-------|--------|
 | Q / RMB | Fire breath (hold) |
 | Mobile FIRE | Fire breath |
-| F | Aeris Surge (unchanged) |
-| SPACE | Flap |
+| F | Aeris Surge |
+| SPACE | Flap / take off |
 | SHIFT | Boost |
+| E | Resonance ping |
+| ESC | Pause |
 
 ## Three Forges
 
@@ -36,4 +36,7 @@ Re-run the agent with a request to **push the prepared dova_v02.html** or paste 
 2. Near Island B (Lux)
 3. Near Island C (Ignis)
 
-Ignite with fire breath. Lighting all three unlocks the forge completion toast.
+Ignite each with fire breath. Lighting all three unlocks the forge completion toast.
+
+## After merge to main
+GitHub Pages will serve the new index. Existing v0.1 localStorage saves migrate automatically on first load of v0.2.
