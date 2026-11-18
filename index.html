@@ -1,16 +1,16 @@
-<!DOCTYPE html><html><head><meta charset="utf-8"><title>DOVA</title>
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>DOVA v0.3</title>
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <style>html,body{margin:0;height:100%;background:#0b0714;color:#5ff3e0;font-family:system-ui;touch-action:none;user-select:none;-webkit-user-select:none}</style>
-</head><body><p id="s" style="padding:2rem">Loading DOVA…</p>
+</head><body><p id="s" style="padding:2rem">Loading DOVA v0.3…</p>
 <script>
 (async()=>{
 const s=document.getElementById('s');
 try{
-const n=35;let html='';
+const n=39;let html='';
 for(let i=0;i<n;i++){
   s.textContent=(i+1)+'/'+n;
-  const r=await fetch('s_'+i+'.txt');
-  if(!r.ok)throw new Error('s_'+i+' '+r.status);
+  const r=await fetch('v3f_'+i+'.txt');
+  if(!r.ok)throw new Error('v3f_'+i+' '+r.status);
   html+=await r.text();
 }
 document.open();document.write(html);document.close();
