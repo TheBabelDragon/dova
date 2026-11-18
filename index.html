@@ -1,1 +1,17 @@
-LOADING_FROM_LOCAL_FILE_SEE_NEXT
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>DOVA Loading…</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<style>body{margin:0;background:#0b0714;color:#5ff3e0;font-family:system-ui;display:grid;place-items:center;height:100vh}</style>
+</head><body><p>Awakening…</p>
+<script>
+(async()=>{
+try{
+const b64=`PLACEHOLDER_B64`;
+const bin=Uint8Array.from(atob(b64),c=>c.charCodeAt(0));
+const ds=new DecompressionStream("gzip");
+const stream=new Blob([bin]).stream().pipeThrough(ds);
+const html=await new Response(stream).text();
+document.open();document.write(html);document.close();
+}catch(e){document.body.innerHTML="<pre style=color:#f88>Failed: "+e+"</pre>";console.error(e)}
+})();
+</script>
+</body></html>
