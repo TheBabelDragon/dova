@@ -1,0 +1,17 @@
+
+  // particles integrate
+  for(const p of PART){if(!p.alive)continue;p.t-=dt;if(p.t<=0){p.alive=0;continue}
+    p.x+=p.vx*dt;p.y+=p.vy*dt;p.z+=p.vz*dt;p.vy+= (p.kind===1?-1: -4)*dt;p.vx*=.98;p.vz*=.98}
+}
+function drawFireWorld(){
+  // particles
+  for(const p of PART){if(!p.alive)continue;const a=p.t/p.life,s=p.sz*(.4+a);bx(I4,p.x,p.y,p.z,s,s,s,p.col,p.kind===1?.9:.5)}
+  // fire cone visual when active
+  if(D.fireOn&&D.fireI>.05){const [mx,my,mz,fx,fy,fz]=mouthPos();const len=6+D.fireI*12;
+    for(let i=0;i<5;i++){const t=(i+.5)/5,w=(.6+t*2.2)*(D.fireI+.3);const px=mx+fx*t*len,py=my+fy*t*len,pz=mz+fz*t*len;
+      bx(I4,px,py,pz,w,w,w,i<2?GD:OR,.85)}}
+  // interactive objects render overrides
+  for(const o of braziers){const lit=o.state>=1;bx(I4,o.x,o.y+1.2,o.z,2.2,2.4,2.2,ST,0,1);bx(I4,o.x,o.y+2.6,o.z,2.8,.5,2.8,lit?OR:DK2,lit?.8:0);
+    if(lit){bx(I4,o.x,o.y+4+Math.sin(tm*5)*.3,o.z,1.2,2.2,1.2,OR,.9);bx(I4,o.x,o.y+5.5,o.z,.6,1.5,.6,GD,.7)}}
+  for(const o of crystals){if(o.state>=2)continue;const h=o.heat||0;const c=o.state>=1?[1,.6+.2*Math.sin(tm*4),.3]:[TQ[0],TQ[1],TQ[2]];
+    dr(pyrM,mul(T(o.x,o.y+2,o.z),Sc(2.5,4+h*.3,2.5)),c,.5+h*.1);dr(pyrM,mul(T(o.x,o.y+2,o.z),Sc(2.5,-2,2.5))

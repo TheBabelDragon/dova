@@ -1,0 +1,16 @@
+,c,.4)}
+  for(const o of seals){const on=o.state>=1;bx(I4,o.x,o.y+.2,o.z,6,.3,6,on?TQ:ST,on?.7:0);bx(I4,o.x,o.y+.5,o.z,3.5,.2,3.5,on?GD:DK2,on?.6:0);
+    if(on)ringD(mul(T(o.x,o.y+1,o.z),RY(tm)),4,10,1.2,TQ,.8)}
+  for(const o of barriers){if(o.state>=1)continue;bx(I4,o.x,o.y+2,o.z,3,4,1.2,ST,0,1);bx(I4,o.x,o.y+4.5,o.z,3.5,1,1.5,RK,0,1)}
+}
+/* ---------- state ---------- */
+const P={x:0,y:3.2,z:0},D={yaw:0,pitch:0,roll:0,sp:0,vs:0,mode:'GROUNDED',aeth:100,ph:0,amp:.15,fold:0,core:.2,surge:0,cd:0,flap:0,boost:0,yr:0,tk:0,tkt:0,rec:0,air:0,fireE:100,fireH:0,fireI:0,fireCd:0,fireOn:0,headAim:0,mouth:0};
+const K={},ms={x:0,y:0},tj={x:0,y:0},tb={F:0,B:0,Fire:0},C={x:0,y:8,z:-18,roll:0,fov:60};
+let st='title',aw=0,tm=0,dbg=0,fps=60,lk=[0,0,0],lastCol=0,tgtD=0;const trail=[],toasts=[];
+const toast=(a,b='',c='#5ff3e0')=>toasts.push({a,b,c,t:4.5});
+const tgt=()=>{for(let i=0;i<3;i++)if(!G.g[i])return GP[i];return G.r<6?RG[G.r].p:null};
+const allG=()=>G.g[0]&&G.g[1]&&G.g[2];
+if(G.p&&isFinite(G.p[0])){P.x=G.p[0];P.y=G.p[1];P.z=G.p[2];D.yaw=G.yaw||0;D.mode='GLIDE';D.sp=26;D.air=1}
+/* ---------- audio ---------- */
+let AC,mg,wg,wf,cg,co,NB;
+function aud(){if(AC)return;try{AC=new(window.AudioConte
