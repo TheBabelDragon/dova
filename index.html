@@ -6,11 +6,11 @@
 (async()=>{
 const s=document.getElementById('s');
 try{
-const n=39;let html='';
+const n=35;let html='';
 for(let i=0;i<n;i++){
   s.textContent=(i+1)+'/'+n;
-  const r=await fetch('v3f_'+i+'.txt');
-  if(!r.ok)throw new Error('v3f_'+i+' '+r.status);
+  const r=await fetch('s_'+i+'.txt');
+  if(!r.ok)throw new Error('s_'+i+' '+r.status);
   html+=await r.text();
 }
 document.open();document.write(html);document.close();
