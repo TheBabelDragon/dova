@@ -1,0 +1,14 @@
+.4,GD,.6);ringD(mul(A,RZ(-tm*.35)),14,10,1.8,TQ,.9);
+ for(let k=0;k<6;k++)bx(mul(A,RZ(k*1.047+tm*.2)),12.5,0,0,22,.7,.7,GD,.5);bx(mul(T(IA.x,IA.top,IA.z),RY(.5)),-30,4,0,4,8,4,ST,0,1);bx(mul(T(IA.x,IA.top,IA.z),RY(.5)),30,4,0,4,8,4,ST,0,1);
+ // island B: ruins, spire, waterfall
+ arch(IB.x-30,IB.top,IB.z-10,.3);arch(IB.x+20,IB.top,IB.z-35,-.5);arch(IB.x+5,IB.top,IB.z+30,1.2);
+ bx(I4,IB.x,IB.top+22,IB.z,6,44,6,ST,0,1);bx(I4,IB.x,IB.top+45,IB.z,9,1.5,9,GD,.6);
+ bx(I4,IB.x+IB.r*.85,IB.top-300,IB.z,9,600,3,WB,.7);bx(I4,IB.x+IB.r*.85,IB.top-1,IB.z,12,2,6,[.9,1,1],.8);
+ for(let k=0;k<5;k++)bx(I4,IB.x-45+k*9,IB.top+3+k%2*2,IB.z+45-k*3,2.4,6+k%3*3,2.4,ST,0,1);
+ // island C: tower
+ const tw=[[26,0],[20,24],[15,46],[10,66]];tw.forEach((a,k)=>bx(I4,IC.x,IC.top+12+a[1],IC.z,a[0],24,a[0],k%2?DK2:ST,0,1));
+ dr(pyrM,mul(T(IC.x,IC.top+92,IC.z),Sc(12,22,12)),GD,.7);ringD(mul(T(IC.x,IC.top+60,IC.z),RX(1.5708)),24,16,2,OR,.7);
+ // glyphs & beams
+ for(let i=0;i<3;i++)if(!G.g[i]){glyph3(GP[i],i);bx(I4,GP[i][0],GP[i][1]+160,GP[i][2],2.5,320,2.5,GN[i][2],.8)}
+ // rings
+ if(allG())for(let i=0;i<6;i++){const r=RG[i],M=mul(T(...r.p),RY(r.yaw)),act=i===G.r;if(i<G.r)ringD(M,11,14,1.2,GD,.25);else ringD(M,12+(a
