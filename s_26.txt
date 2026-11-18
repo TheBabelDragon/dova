@@ -1,0 +1,12 @@
+.2,-1.4,.2,0,0,0),0,-.2,.2,.18,-.6,.18,GD,.2,0,pyrM)}
+ const lens=[5.2,6.2,5.8,4.6];
+ for(const s of[1,-1]){const fa=Math.sin(D.ph)*a*.8+.12-f*1.1,U=xf(M,s*1,.7,.9,0,s*(.2+f*1.15),s*fa);bx(U,s*1.4,0,0,2.8,.5,.65,DK2);bx(U,s*2.8,0,0,.5,.7,.7,GD,.4*c);
+  const Fo=xf(U,s*2.8,0,0,0,s*(.15+f*.9),s*(Math.sin(D.ph-.9)*a*.5-f*.3));bx(Fo,s*1.8,0,0,3.6,.4,.5,DK);
+  const ps=[0,1,2,3].map(i=>(.05+i*.4)*(1-f*.6));
+  for(let i=0;i<4;i++){const Fi=xf(Fo,s*3.6,0,0,0,s*ps[i],s*-.07*i);bx(Fi,s*lens[i]/2,0,0,lens[i],.16,.2,DK2);
+   if(i<3){const Lm=(lens[i]+lens[i+1])/2,Mm=xf(Fo,s*3.6,0,0,0,s*(ps[i]+ps[i+1])/2,s*-.07*i);bx(Mm,s*Lm*.45,0,0,Lm*.88,.05,Lm*.36,MB,.3*c+.1)}}}}
+function render(){
+ const w=gc.width,h=gc.height,asp=w/h;gl.viewport(0,0,w,h);gl.clearColor(.5,.3,.4,1);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);
+ const e=[C.x,C.y,C.z],f=nrm([lk[0]-e[0],lk[1]-e[1],lk[2]-e[2]]);let s=nrm(crs(f,[0,1,0]));let up=crs(s,f);
+ const cr=Math.cos(C.roll),sr=Math.sin(C.roll),u2=[up[0]*cr+s[0]*sr,up[1]*cr+s[1]*sr,up[2]*cr+s[2]*sr];s=nrm(crs(f,u2));up=crs(s,f);
+ const V=new Float32Array([s[0],up[0],-f[0],0,s[1],up[1],-f[1],0,s[2],up[2],-f[2],0,-(s[0]*e[0]+s[1]*e[1]+s[2]*e[2]),-(up[0]*e[0]+up[1]*e[1]+

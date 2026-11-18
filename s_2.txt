@@ -1,0 +1,19 @@
+<button id="go">AWAKEN</button>
+<label style="font-size:12px;letter-spacing:.12em">PIXEL SIZE <select id="q"><option value="170">Chunky</option><option value="250">Normal</option><option value="340">Fine</option></select></label>
+<button id="rst" style="font-size:11px;padding:6px 14px">RESET SAVE</button><p id="err" style="color:#f88"></p></div>
+<script>
+'use strict';
+const $=i=>document.getElementById(i),gc=$('gl'),hc=$('hud'),hx=hc.getContext('2d'),cl=(v,a,b)=>v<a?a:v>b?b:v,sm=x=>{x=cl(x,0,1);return x*x*(3-2*x)};
+const SK='dova.v2',SK1='dova.v1';
+let G={g:[0,0,0],r:0,p:null,yaw:0,q:250,v:2,forge:[0,0,0],burned:{},cracked:{},seals:{},fx:0};
+try{
+  const raw=localStorage.getItem(SK)||localStorage.getItem(SK1)||'{}';
+  const o=JSON.parse(raw);
+  Object.assign(G,o);
+  if(!G.v){G.v=2;G.forge=G.forge||[0,0,0];G.burned=G.burned||{};G.cracked=G.cracked||{};G.seals=G.seals||{};G.fx=G.fx||0}
+}catch(e){}
+const save=()=>{try{
+  G.p=[P.x,P.y,P.z];G.yaw=D.yaw;G.v=2;
+  // persist interactive states
+  G.burned={};G.cracked={};G.seals={};
+  for(const o of IO){if(o.type==='tree'&&o.state>=1)G.burned[o.id]=o.state;if(o.type==='crystal'&&o.state>=1)G.cracked[o.id]=o.state;if(o.type==='seal'&&o.state

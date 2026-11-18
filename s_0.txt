@@ -1,0 +1,11 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>DOVA — First Flight · v0.2</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{--t:#5ff3e0;--g:#ffc857;color-scheme:dark}
+html,body{margin:0;height:100%;background:#0b0714;overflow:hidden;font-family:Cinzel,serif;color:#fff;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;-webkit-text-size-adjust:100%;overscroll-behavior:none}
+canvas{position:fixed;inset:0;width:100%;height:100%;touch-action:none}#gl{image-rendering:pixelated}#hud{pointer-events:none}
+#ui{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:rgba(8,4,16,.6);text-align:center;padding:20px;box-sizing:border-box}
+#ui h1{font-size:min(16vw,84px);margin:0;letter-spacing:.2em;color:var(--g);text-shadow:0 0 28px #ff9a3c}
+#ui p{margin:0;color:#bfeee8;max-width:560px;font-size:13px;line-height:1.6;letter-spacing:.06em}
+button,select{font:inherit;font-size:14px;background:#12303a;color:var(--t);bord

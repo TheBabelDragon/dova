@@ -1,0 +1,13 @@
+0,3,.6,3,GD,.5)}
+function glyph3(p,id){const c=GN[id][2],M=mul(T(p[0],p[1]+Math.sin(tm*1.6+id)*1.5,p[2]),RY(tm*.8));dr(pyrM,mul(M,Sc(5,6,5)),c,.9);dr(pyrM,mul(M,Sc(5,-6,5)),c,.9);
+ for(let k=0;k<3+id;k++){const a=k/(3+id)*6.283+tm;bx(mul(M,RY(a)),7,0,0,1.6,.5+id*.3,.5,c,.9)}}
+function world(){const cx=C.x,cz=C.z,near=(x,z,d)=>Math.abs(x-cx)<d&&Math.abs(z-cz)<d;
+ for(const m of mts)dr(pyrM,mul(T(m[0],m[2]*0+m[1]+m[4]/2,m[2]),Sc(m[3],m[4],m[3])),[.25,.16,.32]);
+ for(const f of far){const i={x:f[0],y:f[1],z:f[2],r:f[3],th:f[3]*1.2};island(i)}
+ for(const i of isl)island(i);
+ for(const t of trees)if(near(t[0],t[2],900)){const io=t._io,st=io?io.state:0;const col=st>=2?[.18,.12,.1]:st===1?[.35,.2,.08]:(t[4]<.5?[.16,.34,.26]:[.2,.4,.22]);const em=st===1?.5:0;dr(pyrM,mul(T(t[0],t[1]+t[3]*.9,t[2]),Sc(t[3]*.8,t[3]*1.8,t[3]*.8)),col,em,1);}
+ // start altar
+ bx(I4,0,.15,0,16,.3,16,ST,0,1);bx(I4,0,.35,0,.8,.1,14,TQ,.8);bx(I4,0,.35,0,14,.1,.8,TQ,.8);
+ for(const a of[-1,1])for(const b of[-1,1]){bx(I4,a*8,5,b*8,1.6,10,1.6,DK2,0,1);bx(I4,a*8,10.4,b*8,1.2,.8,1.2,TQ,.9)}
+ // island A: giant glyph circle
+ const A=mul(T(IA.x,IA.top+42,IA.z),RY(.5));ringD(A,36,28,3.2,TQ,.7);ringD(mul(A,RZ(tm*.2)),25,18,2

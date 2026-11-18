@@ -1,0 +1,12 @@
+ct?Math.sin(tm*4)*.8:0),14,act?2.6:1.5,act?TQ:GD,act?1:.4)}
+ // clouds
+ for(const c of clouds){const x=((c[0]+tm*5+2200)%4400+4400)%4400-2200,s=c[3];if(near(x,c[2],2600)){const M=T(x,c[1],c[2]);bx(M,0,0,0,s*4,s*.6,s*2.6,[1,.8,.75],.25);bx(M,s*.8,s*.4,s*.2,s*2.6,s*.7,s*2,[1,.86,.8],.3);bx(M,-s*1.1,-s*.1,-s*.4,s*2.4,s*.5,s*2.4,[.95,.7,.72],.2)}}
+ // motes
+ for(let i=0;i<70;i++){const o=i*37.7,wr=(v)=>((v%160)+160)%160-80;const x=cx+wr(Math.sin(o)*80+tm*(i%5-2)*2-cx),y=C.y+wr(Math.cos(o*1.3)*80+tm*2-C.y),z=cz+wr(Math.sin(o*2.1)*80+tm*(i%3-1)*2-cz);bx(I4,x,y,z,.28,.28,.28,i%2?TQ:GD,1)}
+ // surge trail
+ for(let i=0;i<trail.length;i++){const q=trail[i],s=1.4*(i/trail.length);bx(I4,q[0],q[1],q[2],s,s,s,TQ,1)}
+ drawFireWorld()}
+function dragon(M){const f=D.fold,a=D.amp*(1-f*.8),c=cl(D.core*(.85+.15*Math.sin(tm*5))+D.fireOn*D.fireI*.5,0,1),air=D.air;
+ bx(M,0,0,0,2.2,1.9,5.2,DK);bx(M,0,1,.2,1.7,.5,3.6,DK2);bx(M,0,-.95,.3,1.6,.3,3.4,DK2);bx(M,0,1.2,-1.4,.5,.3,3,GD,.5*c);
+ for(let i=0;i<5;i++)bx(M,0,1.4,-.5-i*.75,.45,.9-.1*i,.7,GD,.4*c,0,pyrM);
+ dr(cubeM,mul(M,mul(T(0,1.1,1),mul(RY(tm*1.5),Sc(.9,.9,.9)))),TQ,c);dr(cubeM,mul(M,mul(T(0,1.1,1),mul(RX(tm*1.2),Sc(1.5,.15,1.5)))),GD,c*.8);bx(M,0,-.2

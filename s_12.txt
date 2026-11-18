@@ -1,0 +1,28 @@
+,z},o,power*(1-d/(radius+o.r)))}}
+/* fire breath */
+function mouthPos(){
+  // approximate head tip from dragon pose
+  const cp=Math.cos(D.pitch),sp=Math.sin(D.pitch);
+  const cy=Math.cos(D.yaw),sy=Math.sin(D.yaw);
+  // neck forward ~4.5 units, head tip further
+  const aim=D.headAim||0;
+  const fx=sy*cp,fy=sp,fz=cy*cp;
+  return [P.x+fx*5.2,P.y+1.1+fy*5.2,P.z+fz*5.2,fx,fy,fz]}
+function fireUpdate(dt){
+  const want=!!(K.KeyQ||K.Mouse2||tb.Fire)&&D.fireCd<=0&&D.fireE>5&&st==='play';
+  if(want&&!D.fireOn){D.fireOn=1;nz(.15,180,.12);tone(90,.2,'sawtooth',.06,40)}
+  if(!want)D.fireOn=0;
+  if(D.fireOn){
+    const drain=22*dt*(.7+.3*D.fireI);
+    D.fireE=Math.max(0,D.fireE-drain);
+    D.fireH=Math.min(100,D.fireH+28*dt);
+    D.fireI=sm(Math.min(1,D.fireE/40))*(1-D.fireH/140);
+    D.mouth+=(1-D.mouth)*Math.min(1,dt*8);
+    D.headAim+=(0.15-D.headAim)*Math.min(1,dt*4);
+    if(D.fireE<=0||D.fireH>=98){D.fireOn=0;D.fireCd=1.2;toast('Overheat','vents cooling','#ff6a5c');nz(.5,120,.25)}
+    // emit cone + collision
+    const [mx,my,mz,fx,fy,fz]=mouthPos();
+    const len=8+D.fireI*14;
+    const wind=D.surge>0?1.6:1;
+    for(let i=0;i<3;i++){
+      const t=.2+Math.random()*.8,spread=(Math.random()-

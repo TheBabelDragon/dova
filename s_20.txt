@@ -1,0 +1,13 @@
+esonance gathered',`rgb(${GN[i][2].map(v=>v*255|0)})`);
+  if(allG()){setTimeout(()=>{toast('AERIS SURGE UNLOCKED','press F — the rings of the Trial awaken','#ffc857');chime()},1600)}save()}
+ if(allG()&&G.r<6){const r=RG[G.r];if(Math.hypot(P.x-r.p[0],P.y-r.p[1],P.z-r.p[2])<14){G.r++;chime();toast(G.r<6?`Ring ${G.r}/6`:'TRIAL COMPLETE',G.r<6?'':'the Shattered Reach is yours','#ffc857');save()}}
+ const t=tgt();tgtD=t?Math.hypot(P.x-t[0],P.y-t[1],P.z-t[2]):0;
+ fireUpdate(dt);anim(dt)}
+function anim(dt){const fl=D.flap,bo=D.boost,air=D.air;const rate=fl?7.5:bo?8.5:air?(D.sp<13.5?5:1.7):.9,pr=Math.sin(D.ph);D.ph+=rate*dt;
+ if(pr>0&&Math.sin(D.ph)<=0&&(fl||bo)&&st==='play')beat();
+ D.amp+=((fl?.85:bo?.7:air?.3:.15)-D.amp)*Math.min(1,dt*5);
+ const fo=(air&&D.pitch<-.35&&D.sp>30)||(air&&K.ShiftLeft&&D.pitch<-.2)?1:0;D.fold+=(fo-D.fold)*Math.min(1,dt*3.5)}
+function ability(){if(!allG()||D.cd>0||D.aeth<30||st!=='play')return;D.surge=3.5;D.cd=6;D.aeth-=30;nz(.9,400,.4,3000);tone(200,.9,'sawtooth',.12,500);toast('AERIS SURGE','wind lifts the frame','#5ff3e0')}
+/* ---------- camera ---------- */
+function cam(dt){let Lx,Ly,Lz;
+ if(st!=='play'){const a=st==='awaken'?2.8+aw*.45:tm*.1+2.8;C.x=P.x+Ma

@@ -1,0 +1,16 @@
+];
+function rng(s){return()=>{s=s+0x6D2B79F5|0;let t=Math.imul(s^s>>>15,1|s);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+/* ---------- renderer ---------- */
+const HZ='vec3(.95,.5,.4)',DIT=`const float B[16]=float[16](0.,8.,2.,10.,12.,4.,14.,6.,3.,11.,1.,9.,15.,7.,13.,5.);
+vec3 dith(vec3 l){int i=int(mod(gl_FragCoord.x,4.))+4*int(mod(gl_FragCoord.y,4.));return floor(l*8.+.5+((B[i]+.5)/16.-.5)*.9)/8.;}`;
+const VS=`#version 300 es
+layout(location=0)in vec3 a;uniform mat4 VP,M;out vec3 w;void main(){vec4 p=M*vec4(a,1);w=p.xyz;gl_Position=VP*p;}`;
+const FS=`#version 300 es
+precision highp float;in vec3 w;uniform vec3 C,cam;uniform vec2 E;uniform float fog;out vec4 o;${DIT}
+void main(){vec3 n=normalize(cross(dFdx(w),dFdy(w)));vec3 L=normalize(vec3(-.5,.25,.8));vec3 c=C;
+if(E.y>0.)c*=.86+.28*fract(sin(dot(floor(w*.6),vec3(12.9,78.2,37.7)))*43758.5);
+vec3 amb=mix(vec3(.24,.17,.34),vec3(.6,.45,.45),n.y*.5+.5);
+vec3 l=c*(amb+max(dot(n,L),0.)*vec3(1.,.78,.55)*.9+max(dot(n,-L),0.)*vec3(.12,.2,.32));l=mix(l,C*1.4,E.x);
+float f=1.-exp(-length(w-cam)*fog);l=mix(l,${HZ}*.9,f*(1.-E.x*.7));o=vec4(dith(l),1);}`;
+const SVS=`#version 300 es
+out vec2 q;void main(){vec2 p=vec2(gl_V

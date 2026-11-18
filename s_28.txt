@@ -1,0 +1,9 @@
+=innerWidth,H=innerHeight;hx.clearRect(0,0,W,H);hx.textAlign='center';hx.lineWidth=2;
+ if(st==='awaken'){hx.fillStyle='#5ff3e0';hx.font='700 22px Cinzel,serif';hx.fillText('AWAKENING',W/2,H*.82);hx.fillRect(W/2-100,H*.85,200*Math.min(1,aw/4),3);return}
+ if(st!=='play')return;
+ hx.font='600 13px Cinzel,monospace';const hd=((-D.yaw*57.2958)%360+360)%360,wr=v=>((v+540)%360)-180;
+ hx.fillStyle=hx.strokeStyle='rgba(95,243,224,.85)';hx.beginPath();for(let d=Math.ceil((hd-60)/5)*5;d<=hd+60;d+=5){const x=W/2+(d-hd)*6,mj=d%15===0;hx.moveTo(x,24);hx.lineTo(x,mj?38:32)}hx.stroke();
+ for(let d=Math.ceil((hd-60)/45)*45;d<=hd+60;d+=45){const x=W/2+(d-hd)*6,dd=((d%360)+360)%360;hx.fillText(dd%90===0?NSEW[dd/90]:dd,x,54)}
+ hx.fillStyle='#ffc857';hx.beginPath();hx.moveTo(W/2,18);hx.lineTo(W/2-5,10);hx.lineTo(W/2+5,10);hx.fill();
+ const t=tgt();if(t){const th=-Math.atan2(t[0]-P.x,t[2]-P.z)*57.2958,df=wr(th-hd),x=W/2+cl(df,-60,60)*6;hx.fillStyle='#ffc857';hx.beginPath();hx.moveTo(x,66);hx.lineTo(x+6,74);hx.lineTo(x,82);hx.lineTo(x-6,74);hx.fill();hx.fillText(Math.round(tgtD)+' m',x,98)}
+ hx.textAlign='left';hx.fillStyle='#bfeee8';hx.font='700 16px Cinzel,monospace';hx.fillText('SPD '+Math.round(D.sp*

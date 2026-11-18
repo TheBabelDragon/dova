@@ -1,0 +1,12 @@
+ner('pointerup',pu);addEventListener('pointercancel',pu);
+for(const[id,k]of[['bF','F'],['bB','B']]){const b=$(id);b.addEventListener('pointerdown',e=>{e.stopPropagation();tb[k]=1});b.addEventListener('pointerup',()=>tb[k]=0);b.addEventListener('pointerleave',()=>tb[k]=0)}
+$('bA').addEventListener('pointerdown',e=>{e.stopPropagation();ability()});
+if(matchMedia('(pointer:coarse)').matches)$('tc').classList.remove('hide');
+$('q').value=G.q;$('q').onchange=e=>{G.q=+e.target.value;save();rs()};
+$('rst').onclick=()=>{try{localStorage.removeItem(SK)}catch(e){}location.reload()};
+
+addEventListener('mousedown',e=>{if(e.button===2)K.Mouse2=1});addEventListener('mouseup',e=>{if(e.button===2)K.Mouse2=0});
+addEventListener('contextmenu',e=>e.preventDefault());
+const bFire=$('bFire');if(bFire){bFire.addEventListener('pointerdown',e=>{e.stopPropagation();tb.Fire=1});bFire.addEventListener('pointerup',()=>tb.Fire=0);bFire.addEventListener('pointerleave',()=>tb.Fire=0);bFire.addEventListener('pointercancel',()=>tb.Fire=0)}
+$('go').onclick=()=>{aud();if(AC&&AC.state==='suspended')AC.resume();$('ui').classList.add('hide');
+ if(st==='pause'){st='play';try{document.body.requestPointerLock()}catch(e){}
