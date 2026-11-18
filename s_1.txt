@@ -1,0 +1,9 @@
+er:1px solid var(--t);padding:10px 24px;letter-spacing:.14em;cursor:pointer;-webkit-user-select:none}
+.hide{display:none!important}
+#tc div{position:fixed;width:70px;height:70px;border-radius:50%;border:2px solid var(--t);display:flex;align-items:center;justify-content:center;background:#0a2a3099;font-size:11px;letter-spacing:.05em;touch-action:none;-webkit-user-select:none}
+#bFire{border-color:#ff6a3c!important;color:#ff9a5c!important}
+</style></head><body>
+<canvas id="gl"></canvas><canvas id="hud"></canvas>
+<div id="tc" class="hide"><div id="bF" style="right:16px;bottom:calc(22px + env(safe-area-inset-bottom,0px))">FLAP</div><div id="bB" style="right:96px;bottom:calc(22px + env(safe-area-inset-bottom,0px))">BOOST</div><div id="bFire" style="right:16px;bottom:calc(100px + env(safe-area-inset-bottom,0px))">FIRE</div><div id="bA" style="right:96px;bottom:calc(100px + env(safe-area-inset-bottom,0px))">SURGE</div></div>
+<div id="ui"><h1>DOVA</h1><p>FIRST FLIGHT · ELEMENTAL INTERACTIONS · v0.2</p>
+<p>WASD steer · Mouse aim · SPACE flap · SHIFT boost · <b>Q / RMB fire breath</b> · F Aeris Surge · R recover · E resonance · ESC pause<br>Touch: left steer · FLAP / BOOST / FIRE / SURGE</p>

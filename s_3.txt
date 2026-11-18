@@ -1,0 +1,13 @@
+>=1)G.seals[o.id]=o.state;if(o.type==='brazier'&&o.state>=1)G.forge[o.forgeIdx]=1}
+  localStorage.setItem(SK,JSON.stringify(G));
+}catch(e){}};
+/* ---------- math ---------- */
+const I=()=>{const m=new Float32Array(16);m[0]=m[5]=m[10]=m[15]=1;return m},I4=I();
+const mul=(a,b)=>{const o=new Float32Array(16);for(let i=0;i<4;i++)for(let j=0;j<4;j++){let s=0;for(let k=0;k<4;k++)s+=a[k*4+j]*b[i*4+k];o[i*4+j]=s}return o};
+const T=(x,y,z)=>{const m=I();m[12]=x;m[13]=y;m[14]=z;return m},Sc=(x,y,z)=>{const m=I();m[0]=x;m[5]=y;m[10]=z;return m};
+const RX=a=>{const m=I(),c=Math.cos(a),s=Math.sin(a);m[5]=c;m[6]=s;m[9]=-s;m[10]=c;return m};
+const RY=a=>{const m=I(),c=Math.cos(a),s=Math.sin(a);m[0]=c;m[2]=-s;m[8]=s;m[10]=c;return m};
+const RZ=a=>{const m=I(),c=Math.cos(a),s=Math.sin(a);m[0]=c;m[1]=s;m[4]=-s;m[5]=c;return m};
+const xf=(M,x,y,z,rx,ry,rz)=>mul(M,mul(T(x,y,z),mul(RY(ry),mul(RX(rx),RZ(rz)))));
+const persp=(f,a,n,r)=>{const m=new Float32Array(16),t=1/Math.tan(f/2);m[0]=t/a;m[5]=t;m[10]=(r+n)/(n-r);m[11]=-1;m[14]=2*r*n/(n-r);return m};
+const nrm=v=>{const l=Math.hypot(v[0],v[1],v[2])||1;return[v[0]/l,v[1]/l,v[2]/l]},crs=(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]
