@@ -9,4 +9,4 @@ addEventListener('mousedown',e=>{if(e.button===2)K.Mouse2=1});addEventListener('
 addEventListener('contextmenu',e=>e.preventDefault());
 const bFire=$('bFire');if(bFire){bFire.addEventListener('pointerdown',e=>{e.stopPropagation();tb.Fire=1});bFire.addEventListener('pointerup',()=>tb.Fire=0);bFire.addEventListener('pointerleave',()=>tb.Fire=0);bFire.addEventListener('pointercancel',()=>tb.Fire=0)}
 $('go').onclick=()=>{aud();if(AC&&AC.state==='suspended')AC.resume();$('ui').classList.add('hide');
- if(st==='pause'){st='play';try{document.body.requestPointerLock()}catch(e){}
+ if(st==='pause'){st='play';try{const pl=document.body.requestPointerLock&&document.body.requestPointerLock();if(pl&&pl.catch)pl.catch(function(){})}catch(e){}
