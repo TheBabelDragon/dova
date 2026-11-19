@@ -9,7 +9,7 @@ function frame(ms2){requestAnimationFrame(frame);try{const dt=Math.min((ms2-last
  else{if(st==='awaken'){aw+=dt;D.core=Math.min(1,aw/3.6);if(aw>4.2){st='play';toast('The frame lives','hold SPACE to run and take off')}}anim(dt)}
  if(st==='play'&&tm%3<dt)save();
  cam(dt);render();hud();audU()}catch(err){if(!window.__dovaFrameErr){window.__dovaFrameErr=1;console.error('DOVA frame',err);var e=document.getElementById('err');if(e)e.textContent='Runtime: '+err;}}}
-try{initGL();rs();requestAnimationFrame(frame)}catch(e){$('err').textContent=String(e);$('go').classList.add('hide')}
+try{if(!window.WebGL2RenderingContext)throw new Error('WebGL2 API missing');initGL();if(!gl)throw new Error('WebGL2 context null');rs();cam(0);render();requestAnimationFrame(frame)}catch(e){console.error('DOVA boot',e);var er=$('err');if(er)er.textContent='Boot: '+e;var go=$('go');if(go)go.classList.add('hide')}
 gc.addEventListener('webglcontextlost',e=>{e.preventDefault();lost=true});
 gc.addEventListener('webglcontextrestored',()=>{try{initGL();lost=false}catch(e){}});
 </script></body></html>
