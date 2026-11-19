@@ -4,55 +4,44 @@
 
 Play: https://thebabeldragon.github.io/dova/
 
-## Status
+## Root cause
 
-The multi-fragment loader (`v3_s_0` … `v3_s_39`) never received a complete upload. Only `v3_s_0.txt` existed on `main`, so production failed with 404s after the first chunk.
+`main` `index.html` loaded **40** fragments named `v3_s_0.txt` … `v3_s_39.txt`.
+Only **`v3_s_0.txt`** was ever committed. Production failed with 404 on the second request.
 
-**Recovery (this branch):** the complete, working game payload from `s_0.txt`–`s_34.txt` (v0.2 Elemental Interaction Engine + hardened touch controls) is assembled into a **single** `index.html`. No sequential fragment fetches.
+The complete playable game **was** already in the repository as **`s_0.txt`–`s_34.txt`** (35 fragments, ~42 KB total) — the v0.2 Elemental Interaction Engine payload with forges, fire, seals, flight, saves, and WebGL2.
 
-## Features preserved
+## Recovery
 
-- WebGL2 rendering (`#version 300 es`)
-- Procedural world, dragon flight, combat / fire breath
-- Forges, seals, crystals, elemental interactions
-- Save/load via `dova.v2` (reads legacy `dova.v1`)
-- Desktop + hardened mobile controls
-- Intentional **RESET SAVE** only (never auto-wipes)
+`index.html` now:
+
+1. Tries optional single bundle `assets/game.html` if present.
+2. Otherwise loads the complete historical payload **`s_0` … `s_34`** (35 chunks).
+3. Shows an explicit error if any required fragment is missing (no silent failure).
+
+Hardened viewport / touch CSS remain on the shell. Save key stays **`dova.v2`** (reads **`dova.v1`**). **RESET SAVE** is intentional only.
 
 ## Architecture
 
 ```
-index.html          ← single authoritative entry (HTML + CSS + JS)
-tests/validate.mjs  ← integrity + save checks
+index.html           # resilient loader (no v3_s_* dependency)
+s_0.txt … s_34.txt   # complete game source fragments (already on main)
+assets/              # optional single-file bundle + docs
+tests/validate.mjs
 tests/smoke-assets.sh
 ```
 
-No `assets/game.js` split required for recovery; the entire game is self-contained.
+## Features in recovered game
 
-## Controls
+- WebGL2 (`#version 300 es`) + context loss recovery
+- Procedural world, dragon flight, fire breath, Aeris Surge
+- Forges / seals / crystals / elemental interactions
+- Desktop + mobile (touch controls in payload)
+- `localStorage` progression under `dova.v2`
 
-| Input | Action |
-|-------|--------|
-| WASD | Steer |
-| Mouse | Aim (pointer lock) |
-| SPACE | Flap |
-| SHIFT | Boost |
-| Q / RMB | Fire breath |
-| F | Aeris Surge |
-| R | Recover |
-| E | Resonance |
-| ESC | Pause |
-| Touch | Virtual stick + FLAP / BOOST / FIRE / SURGE |
+## Known limitation (honest)
 
-## Saves
-
-- Primary key: `localStorage['dova.v2']`
-- Migration: `dova.v1` is still read on load
-- RESET SAVE is a deliberate UI action
-
-## Development notes
-
-See `README_V02.md` / `README_V03.md` for feature history. Full v0.3 seeded-glyph / resonance / consumable systems were documented and partially started as chunk uploads but **the complete source was never committed**. This recovery prioritizes a working complete game over fabricating missing systems.
+README_V03 describes seeded glyphs, full resonance matrix, and expanded consumables from a **local** ~47–54 KB build that was **never fully uploaded** as `v3_s_*` / `v3f_*` chunks. That source is not in git history. This recovery does **not** invent those systems; it restores the complete committed game.
 
 ## Validation
 
@@ -60,3 +49,7 @@ See `README_V02.md` / `README_V03.md` for feature history. Full v0.3 seeded-glyp
 node tests/validate.mjs
 bash tests/smoke-assets.sh
 ```
+
+## Branch
+
+`fix/v0.3-full-load-recovery` from `main` @ 98321ad
