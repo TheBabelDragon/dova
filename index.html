@@ -10,7 +10,7 @@
 html,body{margin:0;height:100%;background:#0b0714;color:#5ff3e0;font-family:system-ui,sans-serif;
   touch-action:none;-ms-touch-action:none;user-select:none;-webkit-user-select:none;
   -webkit-touch-callout:none;overscroll-behavior:none;overflow:hidden}
-#s{padding:2rem;max-width:36rem;line-height:1.55}
+#s{padding:2rem;max-width:40rem;line-height:1.55}
 #s code{color:#ffc857;font-size:.9em}
 .err{color:#f88}
 </style>
@@ -19,11 +19,14 @@ html,body{margin:0;height:100%;background:#0b0714;color:#5ff3e0;font-family:syst
 <p id="s">Loading DOVA…</p>
 <script>
 (async () => {
+  if (window.__dovaLoaderStarted) return;
+  window.__dovaLoaderStarted = true;
+
   const el = document.getElementById('s');
   const show = (t) => { el.textContent = t; };
   const fail = (msg) => {
     el.innerHTML = '<strong class="err">DOVA failed to load</strong><br>' + msg +
-      '<br><br>Expected fragments <code>s_0.txt</code>…<code>s_34.txt</code>.';
+      '<br><br>Expected 35 fragments <code>s_0.txt</code>…<code>s_34.txt</code> next to this page.';
   };
 
   const base = (() => {
@@ -33,84 +36,50 @@ html,body{margin:0;height:100%;background:#0b0714;color:#5ff3e0;font-family:syst
     } catch (_) { return ''; }
   })();
 
-  const fetchText = async (rel) => {
-    const r = await fetch(base + rel, { cache: 'no-cache' });
-    if (!r.ok) throw new Error(rel + ' → HTTP ' + r.status);
-    return r.text();
-  };
-
-  function patchPayload(html) {
-    // gH was missing in s_0…s_34 → ReferenceError every frame after AWAKEN
-    if (!html.includes('function gH')) {
-      const gh = 'function gH(x,z,y){let best=-1e9;for(const i of isl){const dx=x-i.x,dz=z-i.z,d=Math.hypot(dx,dz);if(d<=i.r*1.05){const t=d/(i.r*1.05);const h=i.top-(t>0.92?(t-0.92)*8:0);if(h>best)best=h;}}return best;}';
-      if (!html.includes('function sim(')) throw new Error('Cannot inject gH: sim() missing');
-      html = html.replace('function sim(', gh + 'function sim(', 1);
-    }
-
-    // Frame try/catch with CORRECT function-closing brace (prior broken patch caused SyntaxError)
-    if (!html.includes('__dovaFrameErr')) {
-      if (html.includes('function frame(ms2){requestAnimationFrame(frame);') &&
-          html.includes('cam(dt);render();hud();audU()}')) {
-        html = html.replace(
-          'function frame(ms2){requestAnimationFrame(frame);',
-          'function frame(ms2){requestAnimationFrame(frame);try{',
-          1
-        );
-        html = html.replace(
-          'cam(dt);render();hud();audU()}',
-          "cam(dt);render();hud();audU()}catch(err){if(!window.__dovaFrameErr){window.__dovaFrameErr=1;console.error('DOVA frame',err);const e=document.getElementById('err');if(e)e.textContent='Runtime: '+err;}}}",
-          1
-        );
-      }
-    }
-
-    const oldBoot = "try{initGL();rs();requestAnimationFrame(frame)}catch(e){$('err').textContent=String(e);$('go').classList.add('hide')}";
-    if (html.includes(oldBoot)) {
-      html = html.replace(oldBoot,
-        "try{if(!window.WebGL2RenderingContext)throw new Error('WebGL2 API missing');initGL();if(!gl)throw new Error('WebGL2 context null');rs();cam(0);render();requestAnimationFrame(frame);console.info('DOVA boot OK')}catch(e){console.error('DOVA boot',e);const er=$('err');if(er)er.textContent='Boot: '+e;const go=$('go');if(go)go.classList.add('hide')}"
-      );
-    }
-
-    // Mobile: disable browser zoom / overscroll in the game document
-    if (!html.includes('data-dova-zoom-lock')) {
-      const zoomCss = '<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" data-dova-zoom-lock="1">' +
-        '<style data-dova-zoom-lock="1">html,body{touch-action:none;-ms-touch-action:none;overscroll-behavior:none;overflow:hidden;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}' +
-        'canvas,#tc,#ui{touch-action:none;-ms-touch-action:none}</style>';
-      html = html.replace(/<head([^>]*)>/, (m) => m + zoomCss, 1);
-      if (html.indexOf('gesturestart') === -1) {
-        const gesture = "document.addEventListener('gesturestart',function(e){e.preventDefault()},{passive:false});" +
-          "document.addEventListener('gesturechange',function(e){e.preventDefault()},{passive:false});";
-        if (html.includes('</script></body>')) {
-          html = html.replace('</script></body>', gesture + '</script></body>', 1);
-        }
-      }
-    }
-    return html;
-  }
-
   try {
     const n = 35;
     show('Loading 0/' + n + '…');
     const parts = new Array(n);
     let done = 0;
+    const errors = [];
+
     await Promise.all(Array.from({ length: n }, (_, i) =>
-      fetchText('s_' + i + '.txt').then((t) => {
-        parts[i] = t; done++; show('Loading ' + done + '/' + n + '…');
+      fetch(base + 's_' + i + '.txt', { cache: 'no-cache' }).then(async (r) => {
+        if (!r.ok) {
+          errors.push('s_' + i + '.txt HTTP ' + r.status);
+          return;
+        }
+        const t = await r.text();
+        if (!t || t.length < 20) {
+          errors.push('s_' + i + '.txt empty/truncated (' + (t ? t.length : 0) + ' B)');
+          return;
+        }
+        parts[i] = t;
+        done++;
+        show('Loading ' + done + '/' + n + '…');
+      }).catch((e) => {
+        errors.push('s_' + i + '.txt ' + (e && e.message ? e.message : e));
       })
     ));
-    let html = parts.join('');
-    if (html.length < 10000) throw new Error('Assembled payload too small (' + html.length + ')');
-    show('Preparing…');
-    html = patchPayload(html);
-    if (!html.includes('function gH')) throw new Error('gH missing after patch');
-    const s0 = html.indexOf('<script>'), s1 = html.lastIndexOf('</script>');
-    if (s0 >= 0 && s1 > s0) {
-      const sc = html.slice(s0, s1);
-      if (sc.split('{').length !== sc.split('}').length)
-        throw new Error('Patched script has unbalanced braces — refusing to boot');
+
+    if (errors.length) throw new Error(errors.slice(0, 8).join('; ') + (errors.length > 8 ? '…' : ''));
+    for (let i = 0; i < n; i++) {
+      if (typeof parts[i] !== 'string') throw new Error('Missing ordered fragment s_' + i + '.txt');
     }
+
+    const html = parts.join('');
+    if (html.length < 20000) throw new Error('Assembled payload too small (' + html.length + ' B)');
+    if (html.indexOf('<!DOCTYPE') !== 0 && html.indexOf('<!doctype') !== 0)
+      throw new Error('Assembled payload does not start with DOCTYPE');
+    if (!html.includes('function gH')) throw new Error('Payload missing gH (ground height)');
+    if (!html.includes('function initGL')) throw new Error('Payload missing initGL');
+    if (!html.includes('function frame')) throw new Error('Payload missing frame loop');
+    if (!html.includes('AWAKEN')) throw new Error('Payload missing AWAKEN control');
+
     show('Starting…');
-    document.open(); document.write(html); document.close();
+    document.open();
+    document.write(html);
+    document.close();
   } catch (e) {
     console.error(e);
     fail(String(e && e.message ? e.message : e));
