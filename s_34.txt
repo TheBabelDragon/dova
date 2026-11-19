@@ -1,5 +1,5 @@
 return}
- st='awaken';aw=0;try{document.body.requestPointerLock()}catch(e){}tone(55,3.5,'sawtooth',.1,60);setTimeout(chime,3200)};
+ st='awaken';aw=0;try{const pl=document.body.requestPointerLock&&document.body.requestPointerLock();if(pl&&pl.catch)pl.catch(function(){})}catch(e){}tone(55,3.5,'sawtooth',.1,60);setTimeout(chime,3200)};
 function pause(){st='pause';$('go').textContent='RESUME';$('ui').classList.remove('hide');save();try{document.exitPointerLock()}catch(e){}}
 /* ---------- loop ---------- */
 let last=0;
