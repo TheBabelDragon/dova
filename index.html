@@ -1,32 +1,81 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>DOVA</title>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>DOVA</title>
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<style>html,body{margin:0;height:100%;background:#0b0714;color:#5ff3e0;font-family:system-ui;touch-action:none;user-select:none;-webkit-user-select:none}#s{padding:2rem;max-width:36rem;line-height:1.5}</style>
-</head><body><p id="s">Loading DOVA…</p>
+<style>
+html,body{margin:0;height:100%;background:#0b0714;color:#5ff3e0;font-family:system-ui,sans-serif;touch-action:none;user-select:none;-webkit-user-select:none}
+#s{padding:2rem;max-width:36rem;line-height:1.55}
+#s code{color:#ffc857;font-size:.9em}
+.err{color:#f88}
+</style>
+</head>
+<body>
+<p id="s">Loading DOVA…</p>
 <script>
-(async()=>{
-const s=document.getElementById('s');
-const show=t=>{s.textContent=t};
-try{
-  // Preferred: single-bundle if present (no fragment race)
-  const bundled=await fetch('assets/game.html');
-  if(bundled.ok){
-    show('Loading game…');
-    const html=await bundled.text();
-    document.open();document.write(html);document.close();
-    return;
+(async () => {
+  const el = document.getElementById('s');
+  const show = (t) => { el.textContent = t; };
+  const fail = (msg) => {
+    el.innerHTML = '<strong class="err">DOVA failed to load</strong><br>' + msg +
+      '<br><br>Expected fragments <code>s_0.txt</code>…<code>s_34.txt</code> next to this page (GitHub Pages project root).';
+  };
+
+  // Resolve base path for GitHub Pages project sites (/dova/) and local file:// or /
+  const base = (() => {
+    try {
+      const u = new URL('.', location.href);
+      return u.href.endsWith('/') ? u.href : u.href + '/';
+    } catch (_) {
+      return '';
+    }
+  })();
+
+  const fetchText = async (rel) => {
+    const r = await fetch(base + rel, { cache: 'no-cache' });
+    if (!r.ok) throw new Error(rel + ' → HTTP ' + r.status);
+    return r.text();
+  };
+
+  try {
+    // Optional single-file bundle (if present in a future deploy)
+    try {
+      const bundled = await fetch(base + 'assets/game.html', { cache: 'no-cache' });
+      if (bundled.ok) {
+        show('Loading game…');
+        const html = await bundled.text();
+        document.open();
+        document.write(html);
+        document.close();
+        return;
+      }
+    } catch (_) { /* fall through to fragments */ }
+
+    const n = 35;
+    show('Loading 0/' + n + '…');
+
+    // Parallel fetch for speed; order is preserved by index
+    const parts = new Array(n);
+    let done = 0;
+    await Promise.all(Array.from({ length: n }, (_, i) =>
+      fetchText('s_' + i + '.txt').then((t) => {
+        parts[i] = t;
+        done++;
+        show('Loading ' + done + '/' + n + '…');
+      })
+    ));
+
+    const html = parts.join('');
+    if (html.length < 10000) throw new Error('Assembled payload too small (' + html.length + ' bytes)');
+    document.open();
+    document.write(html);
+    document.close();
+  } catch (e) {
+    console.error(e);
+    fail(String(e && e.message ? e.message : e));
   }
-  // Fallback: complete historical payload s_0..s_34 (full playable v0.2/v0.3-shell)
-  const n=35; let html='';
-  for(let i=0;i<n;i++){
-    show('Loading '+(i+1)+'/'+n+'…');
-    const r=await fetch('s_'+i+'.txt');
-    if(!r.ok) throw new Error('Missing fragment s_'+i+'.txt ('+r.status+'). The complete game requires s_0 through s_34.');
-    html+=await r.text();
-  }
-  document.open();document.write(html);document.close();
-}catch(e){
-  console.error(e);
-  s.innerHTML='<strong>DOVA failed to load</strong><br>'+String(e)+'<br><br>Expected either <code>assets/game.html</code> or fragments <code>s_0.txt</code>…<code>s_34.txt</code>.';
-}
 })();
-</script></body></html>
+</script>
+</body>
+</html>
