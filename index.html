@@ -19,17 +19,14 @@ html,body{margin:0;height:100%;background:#0b0714;color:#5ff3e0;font-family:syst
   const show = (t) => { el.textContent = t; };
   const fail = (msg) => {
     el.innerHTML = '<strong class="err">DOVA failed to load</strong><br>' + msg +
-      '<br><br>Expected fragments <code>s_0.txt</code>…<code>s_34.txt</code> next to this page (GitHub Pages project root).';
+      '<br><br>Expected fragments <code>s_0.txt</code>…<code>s_34.txt</code> next to this page.';
   };
 
-  // Resolve base path for GitHub Pages project sites (/dova/) and local file:// or /
   const base = (() => {
     try {
       const u = new URL('.', location.href);
       return u.href.endsWith('/') ? u.href : u.href + '/';
-    } catch (_) {
-      return '';
-    }
+    } catch (_) { return ''; }
   })();
 
   const fetchText = async (rel) => {
@@ -38,24 +35,64 @@ html,body{margin:0;height:100%;background:#0b0714;color:#5ff3e0;font-family:syst
     return r.text();
   };
 
+  // Runtime recovery patches applied after assembly (do not invent gameplay; fix missing symbols)
+  function patchPayload(html) {
+    // CRITICAL: gH (ground height) was referenced in sim/render but never defined → ReferenceError every frame after AWAKEN
+    if (!html.includes('function gH')) {
+      const gh = [
+        'function gH(x,z,y){',
+        'let best=-1e9;',
+        'for(const i of isl){',
+        'const dx=x-i.x,dz=z-i.z,d=Math.hypot(dx,dz);',
+        'if(d<=i.r*1.05){const t=d/(i.r*1.05);const h=i.top-(t>0.92?(t-0.92)*8:0);if(h>best)best=h;}',
+        '}',
+        'return best;',
+        '}',
+      ].join('');
+      if (html.includes('function sim(')) {
+        html = html.replace('function sim(', gh + 'function sim(');
+      } else {
+        throw new Error('Cannot inject gH: sim() not found in payload');
+      }
+    }
+
+    // Per-frame try/catch so one throw does not leave a blank frozen canvas with no diagnostics
+    if (!html.includes('__dovaFrameErr')) {
+      html = html.replace(
+        'function frame(ms2){requestAnimationFrame(frame);',
+        "function frame(ms2){requestAnimationFrame(frame);try{"
+      );
+      const tail = 'cam(dt);render();hud();audU()}';
+      const tailPatched = "cam(dt);render();hud();audU()}catch(err){if(!window.__dovaFrameErr){window.__dovaFrameErr=1;console.error('DOVA frame',err);const e=document.getElementById('err');if(e)e.textContent='Runtime: '+err;}}";
+      if (html.includes(tail)) {
+        html = html.replace(tail, tailPatched);
+      }
+    }
+
+    // Clearer boot diagnostics
+    if (html.includes("try{initGL();rs();requestAnimationFrame(frame)}catch(e){$('err').textContent=String(e);$('go').classList.add('hide')}")) {
+      html = html.replace(
+        "try{initGL();rs();requestAnimationFrame(frame)}catch(e){$('err').textContent=String(e);$('go').classList.add('hide')}",
+        "try{if(!window.WebGL2RenderingContext)throw new Error('WebGL2 API missing');initGL();if(!gl)throw new Error('WebGL2 context null');rs();cam(0);render();requestAnimationFrame(frame);console.info('DOVA boot OK')}catch(e){console.error('DOVA boot',e);const er=$('err');if(er)er.textContent='Boot: '+e;const go=$('go');if(go)go.classList.add('hide')}"
+      );
+    }
+    return html;
+  }
+
   try {
-    // Optional single-file bundle (if present in a future deploy)
     try {
       const bundled = await fetch(base + 'assets/game.html', { cache: 'no-cache' });
       if (bundled.ok) {
         show('Loading game…');
-        const html = await bundled.text();
-        document.open();
-        document.write(html);
-        document.close();
+        let html = await bundled.text();
+        html = patchPayload(html);
+        document.open(); document.write(html); document.close();
         return;
       }
-    } catch (_) { /* fall through to fragments */ }
+    } catch (_) {}
 
     const n = 35;
     show('Loading 0/' + n + '…');
-
-    // Parallel fetch for speed; order is preserved by index
     const parts = new Array(n);
     let done = 0;
     await Promise.all(Array.from({ length: n }, (_, i) =>
@@ -66,11 +103,13 @@ html,body{margin:0;height:100%;background:#0b0714;color:#5ff3e0;font-family:syst
       })
     ));
 
-    const html = parts.join('');
+    let html = parts.join('');
     if (html.length < 10000) throw new Error('Assembled payload too small (' + html.length + ' bytes)');
-    document.open();
-    document.write(html);
-    document.close();
+    show('Patching runtime…');
+    html = patchPayload(html);
+    if (!html.includes('function gH')) throw new Error('gH patch failed');
+    show('Starting…');
+    document.open(); document.write(html); document.close();
   } catch (e) {
     console.error(e);
     fail(String(e && e.message ? e.message : e));
