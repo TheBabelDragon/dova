@@ -1,36 +1,62 @@
 # DOVA — First Flight
 
-A WebGL2 dragon flight game set in **The Shattered Reach**.
+**v0.3.1 recovery** — full playable game restored for GitHub Pages.
 
-**Play it here:** [https://thebabeldragon.github.io/dova/](https://thebabeldragon.github.io/dova/)
+Play: https://thebabeldragon.github.io/dova/
+
+## Status
+
+The multi-fragment loader (`v3_s_0` … `v3_s_39`) never received a complete upload. Only `v3_s_0.txt` existed on `main`, so production failed with 404s after the first chunk.
+
+**Recovery (this branch):** the complete, working game payload from `s_0.txt`–`s_34.txt` (v0.2 Elemental Interaction Engine + hardened touch controls) is assembled into a **single** `index.html`. No sequential fragment fetches.
+
+## Features preserved
+
+- WebGL2 rendering (`#version 300 es`)
+- Procedural world, dragon flight, combat / fire breath
+- Forges, seals, crystals, elemental interactions
+- Save/load via `dova.v2` (reads legacy `dova.v1`)
+- Desktop + hardened mobile controls
+- Intentional **RESET SAVE** only (never auto-wipes)
+
+## Architecture
+
+```
+index.html          ← single authoritative entry (HTML + CSS + JS)
+tests/validate.mjs  ← integrity + save checks
+tests/smoke-assets.sh
+```
+
+No `assets/game.js` split required for recovery; the entire game is self-contained.
 
 ## Controls
 
-- **WASD** — Steer (W dive, S climb)
-- **Mouse** — Aim
-- **SPACE** — Flap / take off
-- **SHIFT** — Boost (especially effective when diving)
-- **Q / Right Mouse** — Fire breath (hold)
-- **F** — Elemental ability (Aeris Surge, unlocked after collecting all glyphs)
-- **R** — Recover / level the frame
-- **E** — Resonance ping (shows distance to objective)
-- **ESC** — Pause
-- **`** — Debug overlay
+| Input | Action |
+|-------|--------|
+| WASD | Steer |
+| Mouse | Aim (pointer lock) |
+| SPACE | Flap |
+| SHIFT | Boost |
+| Q / RMB | Fire breath |
+| F | Aeris Surge |
+| R | Recover |
+| E | Resonance |
+| ESC | Pause |
+| Touch | Virtual stick + FLAP / BOOST / FIRE / SURGE |
 
-**Touch:** Drag left half of the screen to steer, use the on-screen buttons on the right (including dedicated **FIRE** button).
+## Saves
 
-## Goal
+- Primary key: `localStorage['dova.v2']`
+- Migration: `dova.v1` is still read on load
+- RESET SAVE is a deliberate UI action
 
-Collect the three ancient glyphs (AERIS, LUX, IGNIS) scattered across the floating islands, then complete the Trial of Rings. Light the **Three Forges** with fire breath for an additional objective.
+## Development notes
 
-## Technical
+See `README_V02.md` / `README_V03.md` for feature history. Full v0.3 seeded-glyph / resonance / consumable systems were documented and partially started as chunk uploads but **the complete source was never committed**. This recovery prioritizes a working complete game over fabricating missing systems.
 
-- Pure HTML + WebGL2 (no external dependencies except Google Fonts)
-- Pixelated aesthetic with ordered dithering
-- Procedural world with islands, ruins, clouds, and mountains
-- Local save with v1 → v2 migration (position, progress, settings, forge state)
-- Elemental Interaction Engine (fire, reactions, destructible environment)
+## Validation
 
----
-
-Created for GitHub Pages deployment.
+```bash
+node tests/validate.mjs
+bash tests/smoke-assets.sh
+```
