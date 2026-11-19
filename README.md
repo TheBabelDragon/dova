@@ -1,36 +1,52 @@
 # DOVA — First Flight
 
-A WebGL2 dragon flight game set in **The Shattered Reach**.
+WebGL2 dragon flight in **The Shattered Reach**.
 
-**Play it here:** [https://thebabeldragon.github.io/dova/](https://thebabeldragon.github.io/dova/)
+**Play:** [https://thebabeldragon.github.io/dova/](https://thebabeldragon.github.io/dova/)
+
+## Status (v0.3.1 recovery)
+
+Production was broken: the loader requested `v3_s_0`…`v3_s_39`, but only `v3_s_0.txt` existed.
+
+**Fixed:** `index.html` loads the complete committed payload **`s_0.txt`–`s_34.txt`** (35 fragments). Optional `assets/game.html` is used when present. Missing assets surface an explicit error.
+
+Saves use `localStorage['dova.v2']` (still reads `dova.v1`). **RESET SAVE** is intentional only.
 
 ## Controls
 
-- **WASD** — Steer (W dive, S climb)
-- **Mouse** — Aim
-- **SPACE** — Flap / take off
-- **SHIFT** — Boost (especially effective when diving)
-- **Q / Right Mouse** — Fire breath (hold)
-- **F** — Elemental ability (Aeris Surge, unlocked after collecting all glyphs)
-- **R** — Recover / level the frame
-- **E** — Resonance ping (shows distance to objective)
-- **ESC** — Pause
-- **`** — Debug overlay
-
-**Touch:** Drag left half of the screen to steer, use the on-screen buttons on the right (including dedicated **FIRE** button).
+| Input | Action |
+|-------|--------|
+| WASD | Steer |
+| Mouse | Aim |
+| SPACE | Flap / take off |
+| SHIFT | Boost |
+| Q / RMB | Fire breath |
+| F | Aeris Surge (after glyphs) |
+| R | Recover |
+| E | Resonance ping |
+| ESC | Pause |
+| Touch | Left steer · FLAP / BOOST / FIRE / SURGE |
 
 ## Goal
 
-Collect the three ancient glyphs (AERIS, LUX, IGNIS) scattered across the floating islands, then complete the Trial of Rings. Light the **Three Forges** with fire breath for an additional objective.
+Collect the three ancient glyphs (AERIS, LUX, IGNIS), light the Three Forges, complete the Trial of Rings.
 
-## Technical
+## Architecture
 
-- Pure HTML + WebGL2 (no external dependencies except Google Fonts)
-- Pixelated aesthetic with ordered dithering
-- Procedural world with islands, ruins, clouds, and mountains
-- Local save with v1 → v2 migration (position, progress, settings, forge state)
-- Elemental Interaction Engine (fire, reactions, destructible environment)
+```
+index.html           # resilient loader (parallel s_0…s_34, or assets/game.html)
+s_0.txt … s_34.txt   # complete game (~42 KB assembled)
+tests/validate.mjs
+tests/smoke-assets.sh
+```
 
----
+## Validation
 
-Created for GitHub Pages deployment.
+```bash
+node tests/validate.mjs
+bash tests/smoke-assets.sh
+```
+
+## Notes
+
+Expanded systems described in `README_V03.md` (full glyph registry, resonance matrix, extra consumables) came from a local build that was never fully uploaded as `v3_s_*` chunks. This recovery restores the complete **committed** game; it does not invent missing source.
