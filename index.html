@@ -10,7 +10,7 @@
 html,body{margin:0;height:100%;background:#0b0714;color:#5ff3e0;font-family:system-ui,sans-serif;
   touch-action:none;-ms-touch-action:none;user-select:none;-webkit-user-select:none;
   -webkit-touch-callout:none;overscroll-behavior:none;overflow:hidden}
-#s{padding:2rem;max-width:36rem;line-height:1.55}
+#s{padding:2rem;max-width:40rem;line-height:1.55}
 #s code{color:#ffc857;font-size:.9em}
 .err{color:#f88}
 </style>
@@ -19,33 +19,63 @@ html,body{margin:0;height:100%;background:#0b0714;color:#5ff3e0;font-family:syst
 <p id="s">Loading DOVA…</p>
 <script>
 (async () => {
+  if (window.__dovaLoaderStarted) return;
+  window.__dovaLoaderStarted = true;
+
   const el = document.getElementById('s');
   const show = (t) => { el.textContent = t; };
   const fail = (msg) => {
     el.innerHTML = '<strong class="err">DOVA failed to load</strong><br>' + msg +
-      '<br><br>Expected fragments <code>s_0.txt</code>…<code>s_34.txt</code>.';
+      '<br><br>Expected 35 fragments <code>s_0.txt</code>…<code>s_34.txt</code> next to this page.';
   };
+
   const base = (() => {
     try {
       const u = new URL('.', location.href);
       return u.href.endsWith('/') ? u.href : u.href + '/';
     } catch (_) { return ''; }
   })();
+
   try {
     const n = 35;
     show('Loading 0/' + n + '…');
     const parts = new Array(n);
     let done = 0;
+    const errors = [];
+
     await Promise.all(Array.from({ length: n }, (_, i) =>
       fetch(base + 's_' + i + '.txt', { cache: 'no-cache' }).then(async (r) => {
-        if (!r.ok) throw new Error('s_' + i + '.txt → HTTP ' + r.status);
-        parts[i] = await r.text();
-        done++; show('Loading ' + done + '/' + n + '…');
+        if (!r.ok) {
+          errors.push('s_' + i + '.txt HTTP ' + r.status);
+          return;
+        }
+        const t = await r.text();
+        if (!t || t.length < 20) {
+          errors.push('s_' + i + '.txt empty/truncated (' + (t ? t.length : 0) + ' B)');
+          return;
+        }
+        parts[i] = t;
+        done++;
+        show('Loading ' + done + '/' + n + '…');
+      }).catch((e) => {
+        errors.push('s_' + i + '.txt ' + (e && e.message ? e.message : e));
       })
     ));
+
+    if (errors.length) throw new Error(errors.slice(0, 8).join('; ') + (errors.length > 8 ? '…' : ''));
+    for (let i = 0; i < n; i++) {
+      if (typeof parts[i] !== 'string') throw new Error('Missing ordered fragment s_' + i + '.txt');
+    }
+
     const html = parts.join('');
-    if (html.length < 10000) throw new Error('Assembled payload too small (' + html.length + ')');
-    if (!html.includes('function gH')) throw new Error('Payload missing gH — incomplete deploy');
+    if (html.length < 20000) throw new Error('Assembled payload too small (' + html.length + ' B)');
+    if (html.indexOf('<!DOCTYPE') !== 0 && html.indexOf('<!doctype') !== 0)
+      throw new Error('Assembled payload does not start with DOCTYPE');
+    if (!html.includes('function gH')) throw new Error('Payload missing gH (ground height)');
+    if (!html.includes('function initGL')) throw new Error('Payload missing initGL');
+    if (!html.includes('function frame')) throw new Error('Payload missing frame loop');
+    if (!html.includes('AWAKEN')) throw new Error('Payload missing AWAKEN control');
+
     show('Starting…');
     document.open();
     document.write(html);
