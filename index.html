@@ -45,9 +45,11 @@ html,body{margin:0;height:100%;background:#0b0714;color:#5ff3e0;font-family:syst
     ));
     const html = parts.join('');
     if (html.length < 10000) throw new Error('Assembled payload too small (' + html.length + ')');
-    if (!html.includes('function gH')) throw new Error('Payload missing gH — deploy is incomplete');
+    if (!html.includes('function gH')) throw new Error('Payload missing gH — incomplete deploy');
     show('Starting…');
-    document.open(); document.write(html); document.close();
+    document.open();
+    document.write(html);
+    document.close();
   } catch (e) {
     console.error(e);
     fail(String(e && e.message ? e.message : e));
