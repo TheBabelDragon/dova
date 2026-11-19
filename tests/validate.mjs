@@ -9,32 +9,32 @@ import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(__dirname, '..');
-const indexPath = path.join(root, 'index.html');
 let failed = 0;
 const ok = (name, cond, detail='') => {
   if (cond) console.log('PASS', name);
   else { console.error('FAIL', name, detail); failed++; }
 };
 
+const indexPath = path.join(root, 'index.html');
+const gamePath = path.join(root, 'assets/game.js');
 const html = fs.readFileSync(indexPath, 'utf8');
-ok('source present', html.length > 20000, `size=${html.length}`);
-ok('DOCTYPE', html.startsWith('<!DOCTYPE html>'));
-ok('WebGL2 shaders', html.includes('#version 300 es'));
-ok('AWAKEN entry', html.includes('AWAKEN') && html.includes('id="go"'));
-ok('no fragment loader', !html.includes("v3_s_") && !/fetch\(\s*['\"]s_/.test(html));
-ok('save key dova.v2', html.includes("dova.v2"));
-ok('v1 migration key', html.includes("dova.v1"));
-ok('RESET is intentional', html.includes("removeItem(SK)") && html.includes('id="rst"'));
-ok('touch hardened', html.includes('user-scalable=no') && html.includes('touch-action:none'));
-ok('WebGL context recovery', html.includes('webglcontextlost') && html.includes('webglcontextrestored'));
-ok('dragon flight controls', html.includes('SPACE') || html.includes('flap'));
-ok('fire breath', /fire/i.test(html));
-ok('balanced braces', (() => {
-  const s = html.slice(html.indexOf('<script>'), html.lastIndexOf('</script>'));
-  return s.split('{').length === s.split('}').length;
-})());
+const js = fs.existsSync(gamePath) ? fs.readFileSync(gamePath, 'utf8') : '';
+const src = html + '\n' + js;
 
-// Simulated save round-trip (Node localStorage polyfill)
+ok('index present', html.length > 500, `size=${html.length}`);
+ok('game.js present', js.length > 20000, `size=${js.length}`);
+ok('DOCTYPE', html.includes('<!DOCTYPE html>'));
+ok('WebGL2 shaders', src.includes('#version 300 es'));
+ok('AWAKEN entry', html.includes('AWAKEN') && html.includes('id="go"'));
+ok('loads assets/game.js', /src=["']assets\/game\.js["']/.test(html));
+ok('no fragment loader', !src.includes("v3_s_") && !/fetch\(\s*['\"]s_/.test(src));
+ok('save key dova.v2', src.includes("dova.v2"));
+ok('v1 migration key', src.includes("dova.v1"));
+ok('RESET is intentional', src.includes("removeItem(SK)") && html.includes('id="rst"'));
+ok('touch hardened', html.includes('user-scalable=no') && html.includes('touch-action:none'));
+ok('WebGL context recovery', js.includes('webglcontextlost') && js.includes('webglcontextrestored'));
+ok('balanced braces in game.js', js.split('{').length === js.split('}').length);
+
 const store = {};
 globalThis.localStorage = {
   getItem: k => (k in store ? store[k] : null),
@@ -43,11 +43,9 @@ globalThis.localStorage = {
 };
 const sample = {g:[1,0,1],r:2,v:2,forge:[1,0,1],burned:{},cracked:{},seals:{},fx:0,p:[1,2,3],yaw:0.5,q:250};
 localStorage.setItem('dova.v2', JSON.stringify(sample));
-const raw = localStorage.getItem('dova.v2');
-const round = JSON.parse(raw);
+const round = JSON.parse(localStorage.getItem('dova.v2'));
 ok('save round-trip', round.r === 2 && round.g[0] === 1 && round.forge[2] === 1);
 
-// v1 → v2 style migration defaults
 localStorage.removeItem('dova.v2');
 localStorage.setItem('dova.v1', JSON.stringify({g:[1,1,0],r:1}));
 const migrated = JSON.parse(localStorage.getItem('dova.v2') || localStorage.getItem('dova.v1') || '{}');

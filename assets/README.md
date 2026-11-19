@@ -1,6 +1,6 @@
 # Assets
 
-Production entry is the root `index.html` (single-file recovered game).
+- `game.js` — full recovered game logic (assembled from historical `s_0`…`s_34` chunks).
+- Loaded by root `index.html` via relative path (works on GitHub Pages project site `/dova/`).
 
-Historical fragment files (`s_*.txt`, `v3_s_*.txt`) are retained on main history only;
-they are no longer required for loading.
+Historical fragment files are no longer required at runtime.
