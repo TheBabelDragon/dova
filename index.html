@@ -4,8 +4,12 @@
 <meta charset="utf-8">
 <title>DOVA</title>
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
 <style>
-html,body{margin:0;height:100%;background:#0b0714;color:#5ff3e0;font-family:system-ui,sans-serif;touch-action:none;user-select:none;-webkit-user-select:none}
+html,body{margin:0;height:100%;background:#0b0714;color:#5ff3e0;font-family:system-ui,sans-serif;
+  touch-action:none;-ms-touch-action:none;user-select:none;-webkit-user-select:none;
+  -webkit-touch-callout:none;overscroll-behavior:none;overflow:hidden}
 #s{padding:2rem;max-width:36rem;line-height:1.55}
 #s code{color:#ffc857;font-size:.9em}
 .err{color:#f88}
@@ -19,7 +23,7 @@ html,body{margin:0;height:100%;background:#0b0714;color:#5ff3e0;font-family:syst
   const show = (t) => { el.textContent = t; };
   const fail = (msg) => {
     el.innerHTML = '<strong class="err">DOVA failed to load</strong><br>' + msg +
-      '<br><br>Expected fragments <code>s_0.txt</code>…<code>s_34.txt</code> next to this page.';
+      '<br><br>Expected fragments <code>s_0.txt</code>…<code>s_34.txt</code>.';
   };
 
   const base = (() => {
@@ -35,79 +39,76 @@ html,body{margin:0;height:100%;background:#0b0714;color:#5ff3e0;font-family:syst
     return r.text();
   };
 
-  // Runtime recovery patches applied after assembly (do not invent gameplay; fix missing symbols)
   function patchPayload(html) {
-    // CRITICAL: gH (ground height) was referenced in sim/render but never defined → ReferenceError every frame after AWAKEN
+    // gH was missing in s_0…s_34 → ReferenceError every frame after AWAKEN
     if (!html.includes('function gH')) {
-      const gh = [
-        'function gH(x,z,y){',
-        'let best=-1e9;',
-        'for(const i of isl){',
-        'const dx=x-i.x,dz=z-i.z,d=Math.hypot(dx,dz);',
-        'if(d<=i.r*1.05){const t=d/(i.r*1.05);const h=i.top-(t>0.92?(t-0.92)*8:0);if(h>best)best=h;}',
-        '}',
-        'return best;',
-        '}',
-      ].join('');
-      if (html.includes('function sim(')) {
-        html = html.replace('function sim(', gh + 'function sim(');
-      } else {
-        throw new Error('Cannot inject gH: sim() not found in payload');
-      }
+      const gh = 'function gH(x,z,y){let best=-1e9;for(const i of isl){const dx=x-i.x,dz=z-i.z,d=Math.hypot(dx,dz);if(d<=i.r*1.05){const t=d/(i.r*1.05);const h=i.top-(t>0.92?(t-0.92)*8:0);if(h>best)best=h;}}return best;}';
+      if (!html.includes('function sim(')) throw new Error('Cannot inject gH: sim() missing');
+      html = html.replace('function sim(', gh + 'function sim(', 1);
     }
 
-    // Per-frame try/catch so one throw does not leave a blank frozen canvas with no diagnostics
+    // Frame try/catch with CORRECT function-closing brace (prior broken patch caused SyntaxError)
     if (!html.includes('__dovaFrameErr')) {
-      html = html.replace(
-        'function frame(ms2){requestAnimationFrame(frame);',
-        "function frame(ms2){requestAnimationFrame(frame);try{"
-      );
-      const tail = 'cam(dt);render();hud();audU()}';
-      const tailPatched = "cam(dt);render();hud();audU()}catch(err){if(!window.__dovaFrameErr){window.__dovaFrameErr=1;console.error('DOVA frame',err);const e=document.getElementById('err');if(e)e.textContent='Runtime: '+err;}}";
-      if (html.includes(tail)) {
-        html = html.replace(tail, tailPatched);
+      if (html.includes('function frame(ms2){requestAnimationFrame(frame);') &&
+          html.includes('cam(dt);render();hud();audU()}')) {
+        html = html.replace(
+          'function frame(ms2){requestAnimationFrame(frame);',
+          'function frame(ms2){requestAnimationFrame(frame);try{',
+          1
+        );
+        html = html.replace(
+          'cam(dt);render();hud();audU()}',
+          "cam(dt);render();hud();audU()}catch(err){if(!window.__dovaFrameErr){window.__dovaFrameErr=1;console.error('DOVA frame',err);const e=document.getElementById('err');if(e)e.textContent='Runtime: '+err;}}}",
+          1
+        );
       }
     }
 
-    // Clearer boot diagnostics
-    if (html.includes("try{initGL();rs();requestAnimationFrame(frame)}catch(e){$('err').textContent=String(e);$('go').classList.add('hide')}")) {
-      html = html.replace(
-        "try{initGL();rs();requestAnimationFrame(frame)}catch(e){$('err').textContent=String(e);$('go').classList.add('hide')}",
+    const oldBoot = "try{initGL();rs();requestAnimationFrame(frame)}catch(e){$('err').textContent=String(e);$('go').classList.add('hide')}";
+    if (html.includes(oldBoot)) {
+      html = html.replace(oldBoot,
         "try{if(!window.WebGL2RenderingContext)throw new Error('WebGL2 API missing');initGL();if(!gl)throw new Error('WebGL2 context null');rs();cam(0);render();requestAnimationFrame(frame);console.info('DOVA boot OK')}catch(e){console.error('DOVA boot',e);const er=$('err');if(er)er.textContent='Boot: '+e;const go=$('go');if(go)go.classList.add('hide')}"
       );
+    }
+
+    // Mobile: disable browser zoom / overscroll in the game document
+    if (!html.includes('data-dova-zoom-lock')) {
+      const zoomCss = '<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" data-dova-zoom-lock="1">' +
+        '<style data-dova-zoom-lock="1">html,body{touch-action:none;-ms-touch-action:none;overscroll-behavior:none;overflow:hidden;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}' +
+        'canvas,#tc,#ui{touch-action:none;-ms-touch-action:none}</style>';
+      html = html.replace(/<head([^>]*)>/, (m) => m + zoomCss, 1);
+      if (html.indexOf('gesturestart') === -1) {
+        const gesture = "document.addEventListener('gesturestart',function(e){e.preventDefault()},{passive:false});" +
+          "document.addEventListener('gesturechange',function(e){e.preventDefault()},{passive:false});";
+        if (html.includes('</script></body>')) {
+          html = html.replace('</script></body>', gesture + '</script></body>', 1);
+        }
+      }
     }
     return html;
   }
 
   try {
-    try {
-      const bundled = await fetch(base + 'assets/game.html', { cache: 'no-cache' });
-      if (bundled.ok) {
-        show('Loading game…');
-        let html = await bundled.text();
-        html = patchPayload(html);
-        document.open(); document.write(html); document.close();
-        return;
-      }
-    } catch (_) {}
-
     const n = 35;
     show('Loading 0/' + n + '…');
     const parts = new Array(n);
     let done = 0;
     await Promise.all(Array.from({ length: n }, (_, i) =>
       fetchText('s_' + i + '.txt').then((t) => {
-        parts[i] = t;
-        done++;
-        show('Loading ' + done + '/' + n + '…');
+        parts[i] = t; done++; show('Loading ' + done + '/' + n + '…');
       })
     ));
-
     let html = parts.join('');
-    if (html.length < 10000) throw new Error('Assembled payload too small (' + html.length + ' bytes)');
-    show('Patching runtime…');
+    if (html.length < 10000) throw new Error('Assembled payload too small (' + html.length + ')');
+    show('Preparing…');
     html = patchPayload(html);
-    if (!html.includes('function gH')) throw new Error('gH patch failed');
+    if (!html.includes('function gH')) throw new Error('gH missing after patch');
+    const s0 = html.indexOf('<script>'), s1 = html.lastIndexOf('</script>');
+    if (s0 >= 0 && s1 > s0) {
+      const sc = html.slice(s0, s1);
+      if (sc.split('{').length !== sc.split('}').length)
+        throw new Error('Patched script has unbalanced braces — refusing to boot');
+    }
     show('Starting…');
     document.open(); document.write(html); document.close();
   } catch (e) {

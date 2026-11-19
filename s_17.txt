@@ -2,6 +2,7 @@ setValueAtTime(f,t);if(sl)fl.frequency.linearRampToValueAtTime(f+sl,t+d);v.gain.
 const beat=()=>{nz(.28,380,.35);tone(70,.22,'sine',.3,-35);tone(180,.08,'square',.04)},chime=()=>[523,659,784,1047,1319].forEach((f,i)=>tone(f,.5,'triangle',.18,0,i*.09));
 function audU(){if(!AC)return;const t=AC.currentTime;wg.gain.setTargetAtTime(Math.min(.4,D.sp/110)*(D.air?1:.1),t,.15);wf.frequency.setTargetAtTime(300+D.sp*16,t,.15);cg.gain.setTargetAtTime(st==='title'?0:.05*D.core,t,.2);co.frequency.setTargetAtTime(70+D.core*45+D.surge*20,t,.2)}
 /* ---------- flight ---------- */
+function gH(x,z,y){let best=-1e9;for(const i of isl){const dx=x-i.x,dz=z-i.z,d=Math.hypot(dx,dz);if(d<=i.r*1.05){const t=d/(i.r*1.05);const h=i.top-(t>0.92?(t-0.92)*8:0);if(h>best)best=h;}}return best;}
 function sim(dt){
  const ax=cl((K.KeyD||K.ArrowRight?1:0)-(K.KeyA||K.ArrowLeft?1:0)+ms.x+tj.x,-1,1),ay=cl((K.KeyS||K.ArrowDown?1:0)-(K.KeyW||K.ArrowUp?1:0)+ms.y+tj.y,-1,1);
  ms.x*=Math.exp(-2.5*dt);ms.y*=Math.exp(-2.5*dt);
