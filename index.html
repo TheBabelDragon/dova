@@ -1,25 +1,32 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>DOVA — First Flight · v0.3</title>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>DOVA</title>
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&display=swap" rel="stylesheet">
-<style>
-:root{--t:#5ff3e0;--g:#ffc857;color-scheme:dark}
-html,body{margin:0;height:100%;background:#0b0714;overflow:hidden;font-family:Cinzel,serif;color:#fff;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;-webkit-text-size-adjust:100%;overscroll-behavior:none;-ms-touch-action:none}
-*,*::before,*::after{touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
-canvas{position:fixed;inset:0;width:100%;height:100%;touch-action:none;-ms-touch-action:none}#gl{image-rendering:pixelated}#hud{pointer-events:none}
-#tc,#tc *{touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;pointer-events:auto}
-#ui{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:rgba(8,4,16,.6);text-align:center;padding:20px;box-sizing:border-box}
-#ui h1{font-size:min(16vw,84px);margin:0;letter-spacing:.2em;color:var(--g);text-shadow:0 0 28px #ff9a3c}
-#ui p{margin:0;color:#bfeee8;max-width:560px;font-size:13px;line-height:1.6;letter-spacing:.06em}
-button,select{font:inherit;font-size:14px;background:#12303a;color:var(--t);border:1px solid var(--t);padding:10px 24px;letter-spacing:.14em;cursor:pointer;-webkit-user-select:none}
-.hide{display:none!important}
-#tc div{position:fixed;width:76px;height:76px;border-radius:50%;border:2px solid var(--t);display:flex;align-items:center;justify-content:center;background:#0a2a3099;font-size:11px;letter-spacing:.05em;touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
-#bFire{border-color:#ff6a3c!important;color:#ff9a5c!important}
-</style></head><body>
-<canvas id="gl"></canvas><canvas id="hud"></canvas>
-<div id="tc" class="hide"><div id="bF" style="right:16px;bottom:calc(22px + env(safe-area-inset-bottom,0px))">FLAP</div><div id="bB" style="right:96px;bottom:calc(22px + env(safe-area-inset-bottom,0px))">BOOST</div><div id="bFire" style="right:16px;bottom:calc(100px + env(safe-area-inset-bottom,0px))">FIRE</div><div id="bA" style="right:96px;bottom:calc(100px + env(safe-area-inset-bottom,0px))">SURGE</div></div>
-<div id="ui"><h1>DOVA</h1><p>FIRST FLIGHT · SEEDED GLYPHS · RESONANCE · v0.3</p>
-<p>WASD steer · Mouse aim · SPACE flap · SHIFT boost · <b>Q / RMB fire</b> · F Surge · R recover · E resonate · C craft · ESC<br>Touch: left steer · FLAP / BOOST / FIRE / SURGE · hold E resonance</p>
-<button id="go">AWAKEN</button>
-<label style="font-size:12px;letter-spacing:.12em">PIXEL SIZE <select id="q"><option value="170">Chunky</option><option value="250">Normal</option><option value="340">Fine</option></select></label>
-<button id="rst" style="font-size:11px;padding:6px 14px">RESET SAVE</button><p id="err" style="color:#f88"></p></div>
-<script src="assets/game.js"></script></body></html>
+<style>html,body{margin:0;height:100%;background:#0b0714;color:#5ff3e0;font-family:system-ui;touch-action:none;user-select:none;-webkit-user-select:none}#s{padding:2rem;max-width:36rem;line-height:1.5}</style>
+</head><body><p id="s">Loading DOVA…</p>
+<script>
+(async()=>{
+const s=document.getElementById('s');
+const show=t=>{s.textContent=t};
+try{
+  // Preferred: single-bundle if present (no fragment race)
+  const bundled=await fetch('assets/game.html');
+  if(bundled.ok){
+    show('Loading game…');
+    const html=await bundled.text();
+    document.open();document.write(html);document.close();
+    return;
+  }
+  // Fallback: complete historical payload s_0..s_34 (full playable v0.2/v0.3-shell)
+  const n=35; let html='';
+  for(let i=0;i<n;i++){
+    show('Loading '+(i+1)+'/'+n+'…');
+    const r=await fetch('s_'+i+'.txt');
+    if(!r.ok) throw new Error('Missing fragment s_'+i+'.txt ('+r.status+'). The complete game requires s_0 through s_34.');
+    html+=await r.text();
+  }
+  document.open();document.write(html);document.close();
+}catch(e){
+  console.error(e);
+  s.innerHTML='<strong>DOVA failed to load</strong><br>'+String(e)+'<br><br>Expected either <code>assets/game.html</code> or fragments <code>s_0.txt</code>…<code>s_34.txt</code>.';
+}
+})();
+</script></body></html>
